@@ -30,6 +30,12 @@ body {
  * STATE *
  * ***** */
 
+#state-table-container {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 1rem;
+}
+
 /* ******* *
  * BUTTONS *
  * ******* */

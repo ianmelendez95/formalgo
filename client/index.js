@@ -1,3 +1,7 @@
+/* ************ *
+ * INSTRUCTIONS *
+ * ************ */
+
 function Instruction(j, theta, phi, b, a) {
   this.j = j
   this.theta = theta
@@ -15,15 +19,6 @@ var INSTRUCTION_TABLE_HEADER =
   "  <th class=\"instruction-table-cell\">a<sub>j</sub></th>\n" +
   "</tr>"
 
-function EvalState(currentState, instructions) {
-  this.currentState = currentState
-  this.instructions = instructions
-}
-
-/* ************ *
- * INSTRUCTIONS *
- * ************ */
-
 function instructionsToTable(j, instructions) {
   return "<table class='instruction-table'>"
     + INSTRUCTION_TABLE_HEADER
@@ -32,7 +27,6 @@ function instructionsToTable(j, instructions) {
 }
 
 function instructionToRow(j, instruction) {
-  console.log("instruction: ", instruction)
   return (instruction.j === j ? "<tr class='current-instruction'>\n" : "<tr>\n")
     + "  <td class='instruction-table-cell'>\n" + instruction.j + "</td>\n"
     + "  <td class='instruction-table-cell'>\n" + instruction.theta + "</td>\n"
@@ -56,3 +50,28 @@ var GCD_INSTRUCTIONS =
   ]
 
 renderInstructionTable(0, GCD_INSTRUCTIONS)
+
+/* ***** *
+ * STATE *
+ * ***** */
+
+var GCD_INITIAL_STATE = new State("aaaaaabb", 0)
+
+function State(sigma, j) {
+  this.sigma = sigma
+  this.j = j
+}
+
+function stateToTable(state) {
+  return "<table class='state-table'>\n"
+    + "  <tr><th>(&sigma;, j)</th></tr>\n"
+    + "  <tr><td>(" + state.sigma + ", " + state.j + ")</td></tr>\n"
+    + "</table>"
+}
+
+function renderState(state) {
+  document.getElementById("state-table-container").innerHTML =
+    stateToTable(state)
+}
+
+renderState(GCD_INITIAL_STATE)
