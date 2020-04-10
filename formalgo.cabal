@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 06ee0c6c52eda4b057a2860734f1f9e388eb66dc5877f78540fc9df5c7a36cd7
+-- hash: 68eb2326696528ada54e17c7a5b11e2e3ab312ce3c92ca4474c7845c7e234cfd
 
 name:           formalgo
 version:        0.1.0.0
@@ -27,6 +27,8 @@ source-repository head
 
 library
   exposed-modules:
+      Algorithms
+      Eval
       Lib
   other-modules:
       Paths_formalgo
