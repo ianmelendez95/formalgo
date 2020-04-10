@@ -10,6 +10,10 @@ body {
  * INSTRUCTION TABLE *
  * ***************** */
 
+.instruction-table {
+    border-collapse: collapse;
+}
+
 .instruction-table-header {
     text-align: center;
 }
