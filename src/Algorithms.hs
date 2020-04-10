@@ -3,6 +3,53 @@ module Algorithms where
 import Eval
 import Data.List
 
+-- MULT ADD
+-- multAdd :: [x,y,z] [p,q] x
+-- multAdd = (+ (* x y) z)
+
+{-
+
+mult :: [a,b] [c,d] a
+multAlgorithm :: Algorithm
+multAlgorithm = Algorithm 5 "abcd"
+  [ Instruction 0 "b"  ""   1 3 
+  , Instruction 1 "a"  "cd" 1 2
+  , Instruction 2 "d"  "a"  2 0
+  , Instruction 3 "a"  ""   3 4
+  , Instruction 4 "c"  "a"  4 5
+  ]
+
+add :: [a,b] [] a -- > [a,e] [] a
+addAlgorithm :: Algorithm
+addAlgorithm = Algorithm 1 "ab" -- > Algo 6 "ae"
+  [ Instruction 0 "b" "a" 0 1   -- > 5 "e" "a" 0 1
+  ]
+
+-}
+
+-- REMQUOTE
+
+evalRemQuot :: Integer -> Integer -> (Integer, Integer)
+evalRemQuot x y = 
+  let input = replicate (fromInteger x) 'a' ++ replicate (fromInteger y) 'b'
+      (output, _) = evalAlgorithm remQuotAlgorithm (input, 0)
+   in (count 'c' output, count 'd' output)
+
+remQuotAlgorithm :: Algorithm
+remQuotAlgorithm = Algorithm 7 "abcd"
+  [ Instruction 0 "ab" ""   1 2 
+  , Instruction 1 ""   "c"  0 0
+
+  , Instruction 2 "b"  "b"  7 3 -- b? 
+
+  , Instruction 3 "cd" "dc" 3 4 -- 'ccdda' -> 'ddcca'
+  , Instruction 4 ""   "d"  5 5 -- prepend d
+  , Instruction 5 "ca" "ac" 5 6 -- 'cccaa' -> 'aaccc'
+  , Instruction 6 "c"  "b"  6 0 -- 'aaccc' -> 'aabbb'
+
+  , Instruction 7 "b"  ""   7 8 -- remove b's and done
+  ]
+
 -- MULT 
 
 evalMult :: Integer -> Integer -> Integer
@@ -12,11 +59,11 @@ evalMult x y =
 
 multAlgorithm :: Algorithm
 multAlgorithm = Algorithm 5 "abcd"
-  [ Instruction 0 "b"  ""   1 3 
-  , Instruction 1 "a"  "cd" 1 2
-  , Instruction 2 "d"  "a"  2 0
-  , Instruction 3 "a"  ""   3 4
-  , Instruction 4 "c"  "a"  4 5
+  [ Instruction 0 "b"  ""   1 3 -- [b] [] []     : [b]   [] []
+  , Instruction 1 "a"  "cd" 1 2 -- [a] [] [c,d]  : [a,b] [] [c,d]
+  , Instruction 2 "d"  "a"  2 0 -- [d] [] [a]    : [d]   [] [a,c]
+  , Instruction 3 "a"  ""   3 4 -- [a] [] []     : 
+  , Instruction 4 "c"  "a"  4 5 -- [c] [] [a]
   ]
 
 -- REMAINDER
@@ -107,4 +154,7 @@ gcdAlgorithm = Algorithm 5 "abc"
   , Instruction 2 "a"  "b" 2 3
   , Instruction 3 "c"  "a" 3 4
   , Instruction 4 "b"  "b" 0 5]
+
+count :: Char -> String -> Integer
+count c = fromIntegral . length . filter (==c)
 
