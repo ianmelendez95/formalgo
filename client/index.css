@@ -1,0 +1,13 @@
+body {
+    color: #fff;
+    background-color: #3B3E43;
+    text-align: center;
+}
+
+.instruction-table-header {
+    text-align: center;
+}
+
+.instruction-table-cell {
+    text-align: center;
+}
