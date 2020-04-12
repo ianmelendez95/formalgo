@@ -29,11 +29,15 @@ function instructionsToTable(j, instructions) {
 function instructionToRow(j, instruction) {
   return (instruction.j === j ? "<tr class='current-instruction'>\n" : "<tr>\n")
     + "  <td class='instruction-table-cell'>\n" + instruction.j + "</td>\n"
-    + "  <td class='instruction-table-cell'>\n" + instruction.theta + "</td>\n"
-    + "  <td class='instruction-table-cell'>\n" + instruction.phi + "</td>\n"
+    + "  <td class='instruction-table-cell'>\n" + instructionStringToText(instruction.theta) + "</td>\n"
+    + "  <td class='instruction-table-cell'>\n" + instructionStringToText(instruction.phi) + "</td>\n"
     + "  <td class='instruction-table-cell'>\n" + instruction.b + "</td>\n"
     + "  <td class='instruction-table-cell'>\n" + instruction.a + "</td>\n"
     + "</tr>"
+}
+
+function instructionStringToText(string) {
+    return string.length === 0 ? "(empty)" : string
 }
 
 function renderInstructionTable(j, instructions) {
@@ -42,14 +46,12 @@ function renderInstructionTable(j, instructions) {
 }
 
 var GCD_INSTRUCTIONS =
-  [ new Instruction(0, "ab", "(empty)", 1, 2),
-    new Instruction(1, "(empty)", "c", 0, 0),
+  [ new Instruction(0, "ab", "", 1, 2),
+    new Instruction(1, "", "c", 0, 0),
     new Instruction(2, "a", "b", 2, 3),
     new Instruction(3, "c", "a", 3, 4),
     new Instruction(4, "b", "b", 0, 5)
   ]
-
-renderInstructionTable(0, GCD_INSTRUCTIONS)
 
 /* ***** *
  * STATE *
@@ -74,4 +76,56 @@ function renderState(state) {
     stateToTable(state)
 }
 
-renderState(GCD_INITIAL_STATE)
+/* ********* *
+ * EVALUATOR *
+ * ********* */
+
+var currentState = GCD_INITIAL_STATE
+var currentInstructions = GCD_INSTRUCTIONS
+
+function handleStep() {
+    currentState = eval(currentInstructions, currentState)
+    renderEvaluator()
+}
+
+function renderEvaluator() {
+    renderInstructionTable(currentState.j, currentInstructions)
+    renderState(currentState)
+}
+
+function eval(instructions, state) {
+    return evalInstruction(findInstruction(state.j, instructions), state)
+}
+
+function findInstruction(j, instructions) {
+    for (var i = 0; i < instructions.length; i++) {
+        if (instructions[i].j === j) {
+            return instructions[i]
+        }
+    }
+
+    throw new Error("No instruction found: j=" + j)
+}
+
+function evalInstruction(instruction, state) {
+    var split = splitTheta(instruction.theta, state.sigma)
+    if (split) {
+        return new State(split.before + instruction.phi + split.after, instruction.b)
+    } else {
+        return new State(state.sigma, instruction.a)
+    }
+}
+
+function splitTheta(theta, input) {
+    var index = input.indexOf(theta)
+    if (index === -1) {
+        return null
+    } else {
+        return {
+            before: input.substring(0, index),
+            after: input.substring(index + theta.length)
+        }
+    }
+}
+
+renderEvaluator(GCD_INSTRUCTIONS, GCD_INITIAL_STATE)

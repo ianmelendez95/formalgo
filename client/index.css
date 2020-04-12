@@ -6,12 +6,43 @@ body {
     font-size: 2rem;
 }
 
+#instructions-state-buttons {
+    width: 80%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+#instructions-and-state {
+    display: block;
+    width: 100%;
+}
+
+#instructions-table-container,
+#state-table-container {
+    display: inline-block;
+    width: 45%;
+}
+
 /* ***************** *
  * INSTRUCTION TABLE *
  * ***************** */
 
+#instructions-table-container {
+    text-align: end;
+}
+
 .instruction-table {
     border-collapse: collapse;
+    display: inline-block;
+}
+
+.instruction-table .current-instruction {
+    border: 2px solid #aaa;
+    box-sizing: border-box;
+}
+
+.instruction-table tr {
+
 }
 
 .instruction-table-header {
@@ -22,10 +53,6 @@ body {
     text-align: center;
 }
 
-.current-instruction {
-    border: 2px solid #aaa
-}
-
 /* ***** *
  * STATE *
  * ***** */
@@ -34,6 +61,11 @@ body {
     display: inline-block;
     vertical-align: top;
     margin-left: 1rem;
+    text-align: center;
+}
+
+.state-table {
+    display: inline-block;
 }
 
 /* ******* *
