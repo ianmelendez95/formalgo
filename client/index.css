@@ -37,12 +37,7 @@ body {
 }
 
 .instruction-table .current-instruction {
-    border: 2px solid #aaa;
-    box-sizing: border-box;
-}
-
-.instruction-table tr {
-
+    background-color: #666;
 }
 
 .instruction-table-header {
