@@ -76,6 +76,26 @@ function renderState(state) {
     stateToTable(state)
 }
 
+/* ******* *
+ * BUTTONS *
+ * ******* */
+
+var STEP_BUTTON = "<button id=\"step-button\" onclick=\"handleStep()\">Step</button>"
+var RESTART_BUTTON = "<button id=\"restart-button\" onclick=\"handleRestart()\">Restart</button>"
+
+function renderButtons(currentInstructions, currentState) {
+    document.getElementById("buttons").innerHTML =
+        buttonsHtml(currentInstructions, currentState)
+}
+
+function buttonsHtml(currentInstructions, currentState) {
+    if (findInstruction(currentState.j, currentInstructions)) {
+        return STEP_BUTTON + "\n" + RESTART_BUTTON
+    } else {
+        return RESTART_BUTTON
+    }
+}
+
 /* ********* *
  * EVALUATOR *
  * ********* */
@@ -84,6 +104,12 @@ var instructions = GCD_INSTRUCTIONS
 
 var initialState = GCD_INITIAL_STATE
 var currentState = GCD_INITIAL_STATE
+
+function renderEvaluator() {
+    renderInstructionTable(currentState.j, instructions)
+    renderState(currentState)
+    renderButtons(instructions, currentState)
+}
 
 function handleStep() {
     currentState = eval(instructions, currentState)
@@ -95,13 +121,11 @@ function handleRestart() {
     renderEvaluator()
 }
 
-function renderEvaluator() {
-    renderInstructionTable(currentState.j, instructions)
-    renderState(currentState)
-}
-
 function eval(instructions, state) {
-    return evalInstruction(findInstruction(state.j, instructions), state)
+    var instruction = findInstruction(state.j, instructions)
+    return instruction === null
+        ? state
+        : evalInstruction(instruction, state)
 }
 
 function findInstruction(j, instructions) {
@@ -111,7 +135,7 @@ function findInstruction(j, instructions) {
         }
     }
 
-    throw new Error("No instruction found: j=" + j)
+    return null
 }
 
 function evalInstruction(instruction, state) {
