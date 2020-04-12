@@ -80,16 +80,23 @@ function renderState(state) {
  * EVALUATOR *
  * ********* */
 
+var instructions = GCD_INSTRUCTIONS
+
+var initialState = GCD_INITIAL_STATE
 var currentState = GCD_INITIAL_STATE
-var currentInstructions = GCD_INSTRUCTIONS
 
 function handleStep() {
-    currentState = eval(currentInstructions, currentState)
+    currentState = eval(instructions, currentState)
+    renderEvaluator()
+}
+
+function handleRestart() {
+    currentState = initialState
     renderEvaluator()
 }
 
 function renderEvaluator() {
-    renderInstructionTable(currentState.j, currentInstructions)
+    renderInstructionTable(currentState.j, instructions)
     renderState(currentState)
 }
 
