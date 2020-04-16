@@ -9,7 +9,7 @@ import Data.List
 
 {-
 
-mult :: [a,b] [c,d] a
+mult :: [a,b] [c,d] [a]
 multAlgorithm :: Algorithm
 multAlgorithm = Algorithm 5 "abcd"
   [ Instruction 0 "b"  ""   1 3 
@@ -19,13 +19,32 @@ multAlgorithm = Algorithm 5 "abcd"
   , Instruction 4 "c"  "a"  4 5
   ]
 
-add :: [a,b] [] a -- > [a,e] [] a
+add :: [a,b] [] [a] -- > [a,e] [] a
 addAlgorithm :: Algorithm
 addAlgorithm = Algorithm 1 "ab" -- > Algo 6 "ae"
   [ Instruction 0 "b" "a" 0 1   -- > 5 "e" "a" 0 1
   ]
 
+
+
 -}
+
+multAdd :: Algorithm
+multAdd = Algorithm 6 "abcde" "a"
+  -- mult
+  [ Instruction 0 "b"  ""   1 3 -- [b] [] []     : [b]   [] []
+  , Instruction 1 "a"  "cd" 1 2 -- [a] [] [c,d]  : [a,b] [] [c,d]
+  , Instruction 2 "d"  "a"  2 0 -- [d] [] [a]    : [d]   [] [a,c]
+  , Instruction 3 "a"  ""   3 4 -- [a] [] []     : 
+  , Instruction 4 "c"  "a"  4 5 -- [c] [] [a]
+
+  -- add
+  , Instruction (0 + 5) "e"  "a"  (0 + 5) (1 + 5)
+  ]
+
+
+sequenceTwo :: Algorithm -> Algorithm -> Algorithm
+sequenceTwo algo1 algo2 = undefined
 
 -- REMQUOTE
 
@@ -59,11 +78,12 @@ evalMult x y =
 
 multAlgorithm :: Algorithm
 multAlgorithm = Algorithm 5 "abcd" "a"
-  [ Instruction 0 "b"  ""   1 3 -- [b] [] []     : [b]   [] []
-  , Instruction 1 "a"  "cd" 1 2 -- [a] [] [c,d]  : [a,b] [] [c,d]
-  , Instruction 2 "d"  "a"  2 0 -- [d] [] [a]    : [d]   [] [a,c]
-  , Instruction 3 "a"  ""   3 4 -- [a] [] []     : 
-  , Instruction 4 "c"  "a"  4 5 -- [c] [] [a]
+  [ Instruction 0 "b"  ""   1 3 -- b? remove b, goto 1, else 3
+  , Instruction 1 "a"  "cd" 1 2 -- aab -> cdcdb
+  , Instruction 2 "d"  "a"  2 0 -- cdcdb -> cacab
+
+  , Instruction 3 "a"  ""   3 4 -- cacaca -> ccc
+  , Instruction 4 "c"  "a"  4 5 -- ccc -> aaa
   ]
 
 -- REMAINDER

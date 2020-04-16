@@ -1,0 +1,4 @@
+#!/usr/bin/zsh
+
+stack build > build.log
+stack exec -- formalgo-exe $@

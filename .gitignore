@@ -2,3 +2,5 @@
 hscheme.cabal
 *~
 .idea
+
+build.log
