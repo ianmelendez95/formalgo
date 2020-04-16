@@ -36,7 +36,7 @@ evalRemQuot x y =
    in (count 'c' output, count 'd' output)
 
 remQuotAlgorithm :: Algorithm
-remQuotAlgorithm = Algorithm 7 "abcd"
+remQuotAlgorithm = Algorithm 8 "abcd" "cd"
   [ Instruction 0 "ab" ""   1 2 
   , Instruction 1 ""   "c"  0 0
 
@@ -58,7 +58,7 @@ evalMult x y =
    in toInteger . length . fst $ evalAlgorithm multAlgorithm (string, 0)
 
 multAlgorithm :: Algorithm
-multAlgorithm = Algorithm 5 "abcd"
+multAlgorithm = Algorithm 5 "abcd" "a"
   [ Instruction 0 "b"  ""   1 3 -- [b] [] []     : [b]   [] []
   , Instruction 1 "a"  "cd" 1 2 -- [a] [] [c,d]  : [a,b] [] [c,d]
   , Instruction 2 "d"  "a"  2 0 -- [d] [] [a]    : [d]   [] [a,c]
@@ -74,7 +74,7 @@ evalRem x y =
    in toInteger . length . fst $ evalAlgorithm remAlgorithm (string, 10)
 
 remAlgorithm :: Algorithm
-remAlgorithm = Algorithm 1000 "ab"
+remAlgorithm = Algorithm 1000 "ab" "a"
   [ Instruction 10 "ab" ""   20 30   -- remove ab
   , Instruction 20 ""   "c"  10  10  -- prepend c
 
@@ -97,7 +97,7 @@ evalIsEqual x y =
    in null . fst $ evalAlgorithm isEqualAlgorithm (string, 10)
 
 isEqualAlgorithm :: Algorithm
-isEqualAlgorithm = Algorithm 1000 "ab"
+isEqualAlgorithm = Algorithm 1000 "ab" "a"
   [ Instruction 10 "ab" ""  10 20   -- remove ab
   , Instruction 20 "b"  ""  30 50   -- b?
 
@@ -117,7 +117,7 @@ evalAdd x y =
    in toInteger . length . fst $ evalAlgorithm addAlgorithm (string, 0)
 
 addAlgorithm :: Algorithm
-addAlgorithm = Algorithm 1 "ab"
+addAlgorithm = Algorithm 1 "ab" "a"
   [ Instruction 0 "b" "a" 0 1 ]
 
 -- DIFF
@@ -128,8 +128,10 @@ evalDiff x y =
    in toInteger . length . fst $ evalAlgorithm diffAlgorithm (string, 0)
 
 diffAlgorithm :: Algorithm
-diffAlgorithm = Algorithm 1 "ab"
-  [ Instruction 0 "ab" "" 0 1 ]
+diffAlgorithm = Algorithm 2 "ab" "a"
+  [ Instruction 0 "ab" ""  0 1
+  , Instruction 1 "b"  "a" 1 2
+  ]
 
 -- GCD
 
@@ -147,7 +149,7 @@ evalGcd m n =
    n <- r
 -}
 gcdAlgorithm :: Algorithm
-gcdAlgorithm = Algorithm 5 "abc"
+gcdAlgorithm = Algorithm 5 "abc" "a"
   --            j thet phi b a
   [ Instruction 0 "ab" ""  1 2
   , Instruction 1 ""   "c" 0 0

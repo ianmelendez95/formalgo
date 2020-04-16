@@ -5,8 +5,9 @@ import Data.List
 -- Formal Algorithm
 
 data Algorithm = Algorithm
-  { algoEnd   :: Integer
+  { algoN     :: Integer
   , algoA     :: String
+  , algoEndA  :: String
   , algoInsts :: [Instruction]
   }
 
@@ -19,19 +20,19 @@ data Instruction = Instruction
   } deriving (Show)
 
 evalAlgorithm :: Algorithm -> (String, Integer) -> (String, Integer)
-evalAlgorithm (Algorithm end chars insts) input =
+evalAlgorithm (Algorithm n chars endA insts) input =
   if not . all (`elem` chars) $ fst input
     then error $ "Invalid input: " ++ fst input
     else doAlgo input
   where
     doAlgo :: (String, Integer) -> (String, Integer)
     doAlgo (sigma, j)
-      | j == end = (sigma, j)
+      | j == n = (sigma, j)
       | otherwise = doAlgo $ evalInstruction (findInstruction j insts) (sigma, j)
 
 evalStep :: Algorithm -> (String, Integer) -> (String, Integer)
-evalStep (Algorithm end chars insts) (sigma, j) 
-  | j == end = (sigma, j)
+evalStep (Algorithm n chars endA insts) (sigma, j) 
+  | j == n = (sigma, j)
   | otherwise = evalInstruction (findInstruction j insts) (sigma, j)
 
 findInstruction :: Integer -> [Instruction] -> Instruction
