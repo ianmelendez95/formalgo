@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 53deddd7f72db7da367029cbd3c7389f28510a903d8643c81ed6514594eba8ff
+-- hash: 1f00ab3b4e55a8553b94648c666d93432231d0f6c8dfa70e3dcf4655f8182174
 
 name:           formalgo
 version:        0.1.0.0
@@ -31,6 +31,7 @@ library
       Assemble
       Eval
       Lib
+      Parser
   other-modules:
       Paths_formalgo
   hs-source-dirs:
@@ -62,4 +63,5 @@ test-suite formalgo-test
   build-depends:
       base >=4.7 && <5
     , formalgo
+    , hspec
   default-language: Haskell2010
