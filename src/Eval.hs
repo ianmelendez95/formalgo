@@ -1,26 +1,10 @@
 module Eval where
 
 import Data.List
-
--- Formal Algorithm
-
-data Algorithm = Algorithm
-  { algoN     :: Integer
-  , algoA     :: String
-  , algoEndA  :: String
-  , algoInsts :: [Instruction]
-  } deriving (Show)
-
-data Instruction = Instruction
-  { instJ     :: Integer
-  , instTheta :: String
-  , instPhi   :: String
-  , instB     :: Integer
-  , instA     :: Integer
-  } deriving (Show)
+import Algorithm
 
 evalAlgorithm :: Algorithm -> (String, Integer) -> (String, Integer)
-evalAlgorithm (Algorithm n chars endA insts) input =
+evalAlgorithm (Algorithm n chars insts) input =
   if not . all (`elem` chars) $ fst input
     then error $ "Invalid input: " ++ fst input
     else doAlgo input
@@ -31,7 +15,7 @@ evalAlgorithm (Algorithm n chars endA insts) input =
       | otherwise = doAlgo $ evalInstruction (findInstruction j insts) (sigma, j)
 
 evalStep :: Algorithm -> (String, Integer) -> (String, Integer)
-evalStep (Algorithm n chars endA insts) (sigma, j) 
+evalStep (Algorithm n chars insts) (sigma, j) 
   | j == n = (sigma, j)
   | otherwise = evalInstruction (findInstruction j insts) (sigma, j)
 

@@ -1,9 +1,10 @@
 module Assemble where
 
 import System.IO
-import Eval (Algorithm (..), Instruction (..))
-import Parser
 import Data.Char (isSpace)
+import Parser
+
+import Algorithm
 
 data Header = Header
   { headerA    :: String
@@ -40,7 +41,7 @@ readPrim instr@[primStr, theta, phi, b, a]
 assemble :: Header -> [Prim] -> Algorithm
 assemble (Header a) prims =
   let instructions = assembleInstructions 0 prims
-   in Algorithm (fromIntegral $ length instructions) a a instructions
+   in Algorithm (fromIntegral $ length instructions) a instructions
 
 assembleInstructions :: Integer -> [Prim] -> [Instruction]
 assembleInstructions _ [] = []
@@ -50,21 +51,3 @@ assembleInstructions instrNum ((Prim theta phi b a):prims) =
                phi
                (instrNum + b) 
                (instrNum + a)) : (assembleInstructions (instrNum + 1) prims)
-
--- TO STRING
-
-algorithmToString :: Algorithm -> String
-algorithmToString (Algorithm n a endA insts) = 
-  let header = unwords [show n, a, endA] 
-      instructionsStr = map instructionToString insts
-   in unlines $ header : instructionsStr
-  
-instructionToString :: Instruction -> String
-instructionToString (Instruction j theta phi b a) =
-  unwords $ [show j, tpToString theta, tpToString phi, show b, show a]
-
-tpToString :: String -> String
-tpToString thetaOrPhi = if null thetaOrPhi then "_" else thetaOrPhi 
-
-tpFromString :: String -> String
-tpFromString thetaOrPhi = if thetaOrPhi == "_" then "" else thetaOrPhi

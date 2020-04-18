@@ -1,7 +1,8 @@
 module Algorithms where
 
-import Eval
 import Data.List
+import Eval
+import Algorithm
 
 -- MULT ADD
 -- multAdd :: [x,y,z] [p,q] x
@@ -30,7 +31,7 @@ addAlgorithm = Algorithm 1 "ab" -- > Algo 6 "ae"
 -}
 
 multAdd :: Algorithm
-multAdd = Algorithm 6 "abcde" "a"
+multAdd = Algorithm 6 "abcde"
   -- mult
   [ Instruction 0 "b"  ""   1 3 -- [b] [] []     : [b]   [] []
   , Instruction 1 "a"  "cd" 1 2 -- [a] [] [c,d]  : [a,b] [] [c,d]
@@ -43,9 +44,6 @@ multAdd = Algorithm 6 "abcde" "a"
   ]
 
 
-sequenceTwo :: Algorithm -> Algorithm -> Algorithm
-sequenceTwo algo1 algo2 = undefined
-
 -- REMQUOTE
 
 evalRemQuot :: Integer -> Integer -> (Integer, Integer)
@@ -55,7 +53,7 @@ evalRemQuot x y =
    in (count 'c' output, count 'd' output)
 
 remQuotAlgorithm :: Algorithm
-remQuotAlgorithm = Algorithm 8 "abcd" "cd"
+remQuotAlgorithm = Algorithm 8 "abcd"
   [ Instruction 0 "ab" ""   1 2 
   , Instruction 1 ""   "c"  0 0
 
@@ -77,7 +75,7 @@ evalMult x y =
    in toInteger . length . fst $ evalAlgorithm multAlgorithm (string, 0)
 
 multAlgorithm :: Algorithm
-multAlgorithm = Algorithm 5 "abcd" "a"
+multAlgorithm = Algorithm 5 "abcd"
   [ Instruction 0 "b"  ""   1 3 -- b? remove b, goto 1, else 3
   , Instruction 1 "a"  "cd" 1 2 -- aab -> cdcdb
   , Instruction 2 "d"  "a"  2 0 -- cdcdb -> cacab
@@ -94,7 +92,7 @@ evalRem x y =
    in toInteger . length . fst $ evalAlgorithm remAlgorithm (string, 10)
 
 remAlgorithm :: Algorithm
-remAlgorithm = Algorithm 1000 "ab" "a"
+remAlgorithm = Algorithm 1000 "ab"
   [ Instruction 10 "ab" ""   20 30   -- remove ab
   , Instruction 20 ""   "c"  10  10  -- prepend c
 
@@ -117,7 +115,7 @@ evalIsEqual x y =
    in null . fst $ evalAlgorithm isEqualAlgorithm (string, 10)
 
 isEqualAlgorithm :: Algorithm
-isEqualAlgorithm = Algorithm 1000 "ab" "a"
+isEqualAlgorithm = Algorithm 1000 "ab"
   [ Instruction 10 "ab" ""  10 20   -- remove ab
   , Instruction 20 "b"  ""  30 50   -- b?
 
@@ -137,7 +135,7 @@ evalAdd x y =
    in toInteger . length . fst $ evalAlgorithm addAlgorithm (string, 0)
 
 addAlgorithm :: Algorithm
-addAlgorithm = Algorithm 1 "ab" "a"
+addAlgorithm = Algorithm 1 "ab"
   [ Instruction 0 "b" "a" 0 1 ]
 
 -- DIFF
@@ -148,7 +146,7 @@ evalDiff x y =
    in toInteger . length . fst $ evalAlgorithm diffAlgorithm (string, 0)
 
 diffAlgorithm :: Algorithm
-diffAlgorithm = Algorithm 2 "ab" "a"
+diffAlgorithm = Algorithm 2 "ab"
   [ Instruction 0 "ab" ""  0 1
   , Instruction 1 "b"  "a" 1 2
   ]
@@ -169,7 +167,7 @@ evalGcd m n =
    n <- r
 -}
 gcdAlgorithm :: Algorithm
-gcdAlgorithm = Algorithm 5 "abc" "a"
+gcdAlgorithm = Algorithm 5 "abc"
   --            j thet phi b a
   [ Instruction 0 "ab" ""  1 2
   , Instruction 1 ""   "c" 0 0
