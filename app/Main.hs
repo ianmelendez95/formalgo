@@ -33,7 +33,7 @@ validateArgs args =
 executeFaFile :: String -> IO ()
 executeFaFile fileName = do
   algo <- readFaFile fileName
-  print $ evalAlgorithm algo ("", 0)
+  putStrLn . fst $ evalAlgorithm algo ("", 0)
 
 readFaFile :: String -> IO Algorithm
 readFaFile fileName = do

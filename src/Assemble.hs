@@ -6,8 +6,7 @@ import Parser
 import Data.Char (isSpace)
 
 data Header = Header
-  { headerN    :: Integer
-  , headerA    :: String
+  { headerA    :: String
   } deriving (Show)
 
 data Prim = Prim
@@ -29,7 +28,7 @@ readAlgorithm (headerLine:instrLines) =
    in assemble header prims
 
 readHeader :: [String] -> Header
-readHeader [n, a] = Header (read n) a
+readHeader [a] = Header a
 
 readPrim :: [String] -> Prim
 readPrim instr@[primStr, theta, phi, b, a] 
@@ -39,9 +38,9 @@ readPrim instr@[primStr, theta, phi, b, a]
 -- ASSEMBLE
 
 assemble :: Header -> [Prim] -> Algorithm
-assemble (Header n a) prims =
+assemble (Header a) prims =
   let instructions = assembleInstructions 0 prims
-   in Algorithm n a a instructions
+   in Algorithm (fromIntegral $ length instructions) a a instructions
 
 assembleInstructions :: Integer -> [Prim] -> [Instruction]
 assembleInstructions _ [] = []
