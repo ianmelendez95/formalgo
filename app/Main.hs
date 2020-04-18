@@ -4,6 +4,9 @@ import System.IO (readFile)
 import System.Environment (getArgs)
 import Data.List (isSuffixOf)
 import Eval (Algorithm (..), Instruction (..), evalAlgorithm)
+
+import Assemble
+
 import Lib
 
 main :: IO ()
@@ -11,7 +14,15 @@ main = do
   [file] <- validateArgs <$> getArgs
   if ".fa" `isSuffixOf` file
      then executeFaFile file
-     else error $ "Not a formalgo executable: " ++ file
+     else if ".fasm" `isSuffixOf` file
+            then assembleFasm file
+            else error $ "Not a formalgo file: " ++ file
+
+assembleFasm :: String -> IO ()
+assembleFasm file = do
+  let newFile = take (length file - 5) file ++ ".fa"
+  algo <- assembleFile file
+  writeFile newFile (algorithmToString algo)
 
 validateArgs :: [String] -> [String]
 validateArgs args = 
@@ -39,8 +50,8 @@ readFaHeaderWords headerWords =
 readInstructionWords :: [String] -> Instruction
 readInstructionWords [j, theta, phi, b, a] = 
   Instruction (read j :: Integer) 
-              (if theta == "()" then "" else theta) 
-              (if phi == "()" then "" else phi) 
+              (if theta == "_" then "" else theta) 
+              (if phi == "_" then "" else phi) 
               (read b :: Integer) 
               (read a :: Integer)
 readInstructionWords instWords = 

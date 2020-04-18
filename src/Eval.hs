@@ -9,7 +9,7 @@ data Algorithm = Algorithm
   , algoA     :: String
   , algoEndA  :: String
   , algoInsts :: [Instruction]
-  }
+  } deriving (Show)
 
 data Instruction = Instruction
   { instJ     :: Integer
