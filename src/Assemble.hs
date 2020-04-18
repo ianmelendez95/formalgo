@@ -2,6 +2,7 @@ module Assemble where
 
 import System.IO
 import Data.Char (isSpace)
+import Data.List (union)
 import Parser
 
 import Algorithm
@@ -22,14 +23,10 @@ data Prim = Prim
 assembleFile :: String -> IO Algorithm
 assembleFile filePath = (readAlgorithm . lines) <$> readFile filePath
 
-readAlgorithm :: [String] -> Algorithm
-readAlgorithm (headerLine:instrLines) = 
-  let header = readHeader $ words headerLine
-      prims = map (readPrim . words) instrLines
-   in assemble header prims
+-- READ
 
-readHeader :: [String] -> Header
-readHeader [a] = Header a
+readAlgorithm :: [String] -> Algorithm
+readAlgorithm instrLines = assemble $ map (readPrim . words) instrLines
 
 readPrim :: [String] -> Prim
 readPrim instr@[primStr, theta, phi, b, a] 
@@ -38,10 +35,17 @@ readPrim instr@[primStr, theta, phi, b, a]
 
 -- ASSEMBLE
 
-assemble :: Header -> [Prim] -> Algorithm
-assemble (Header a) prims =
-  let instructions = assembleInstructions 0 prims
-   in Algorithm (fromIntegral $ length instructions) a instructions
+assemble :: [Prim] -> Algorithm
+assemble prims =
+  let aSet = unionAll $ map aSetFromPrim prims
+      instructions = assembleInstructions 0 prims
+   in Algorithm (fromIntegral $ length instructions) aSet instructions
+
+unionAll :: Eq a => [[a]] -> [a]
+unionAll = foldr union []
+
+aSetFromPrim :: Prim -> String
+aSetFromPrim prim = union (primTheta prim) (primPhi prim)
 
 assembleInstructions :: Integer -> [Prim] -> [Instruction]
 assembleInstructions _ [] = []
