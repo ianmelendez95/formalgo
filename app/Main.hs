@@ -6,9 +6,7 @@ import Data.List (isSuffixOf)
 import Eval (evalAlgorithm)
 import Algorithm
 
-import Assemble2 (assemble)
-
-import Lib
+import Assemble (assemble)
 
 main :: IO ()
 main = getArgs >>= handleArgs 

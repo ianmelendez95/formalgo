@@ -1,102 +1,32 @@
 module Assemble where
 
-import System.IO
-import Data.Char (isSpace, isDigit)
-import Data.List (union, isSuffixOf)
-import Data.Maybe (mapMaybe)
-import Text.Read (readMaybe)
-import Parser
-
 import Algorithm
+import Data.List (isSuffixOf, union)
+import Data.Char (isDigit)
 
-data Header = Header
-  { headerA    :: String
-  } deriving (Show)
-
+-- Prim = all of the information we can deduce during parsing
+  
 data Prim = Prim
-  { primTheta :: String
+  { primIndex :: Integer
+  , primLabel :: Maybe String
+  , primTheta :: String
   , primPhi   :: String
-  , primB     :: String
-  , primA     :: String
+  , primB     :: Either String Integer -- label | offset
+  , primA     :: Either String Integer -- label | offset
   } deriving (Show)
 
--- IO 
+primHasLabel :: String -> Prim -> Bool
+primHasLabel label (Prim { primLabel = (Just pLabel) }) = label == pLabel
+primHasLabel _ _ = False
 
-assembleFile :: String -> IO Algorithm
-assembleFile filePath = (readAlgorithm . lines) <$> readFile filePath
+-- Assembler
 
--- READ
-
-readAlgorithm :: [String] -> Algorithm
-readAlgorithm instrLines = assemble $ doRead instrLines
-
--- NEW READ
-
-doRead :: [String] -> [Instruction]
-doRead instrLines = 
-  let indexedPrims = indexPrims . parsePrims $ instrLines
-   in primsToInstructions (extractLabelMap indexedPrims) indexedPrims
-
-parsePrims :: [String] -> [(Maybe String, Prim)] -- (maybe label, prim)
-parsePrims = map (readPrimTokens . words)
-
-indexPrims :: [(Maybe String, Prim)] -> [(Integer, (Maybe String, Prim))]
-indexPrims = zip [0..]
-
-extractLabelMap :: [(Integer, (Maybe String, Prim))] 
-                -> [(String, Integer)]
-extractLabelMap = mapMaybe extractLabelEntry
-
-primsToInstructions :: [(String, Integer)] 
-                    -> [(Integer, (Maybe String, Prim))] 
-                    -> [Instruction]
-primsToInstructions labelMap = map (primToInstruction labelMap)
-
-extractLabelEntry :: (Integer, (Maybe String, Prim)) -> Maybe (String, Integer)
-extractLabelEntry (index, (Just label, _)) = Just (label, index)
-extractLabelEntry _ = Nothing
-
-primToInstruction :: [(String, Integer)] 
-                  -> (Integer, (Maybe String, Prim)) 
-                  -> Instruction
-primToInstruction labelMap (index, (_, Prim theta phi b a)) = 
-  Instruction index theta phi (resolveOffset b) (resolveOffset a)
-  where
-    resolveOffset :: String -> Integer
-    resolveOffset offsetStr@(c:cs) = 
-      if isDigit c 
-         then readInt offsetStr
-         else lookupLabel offsetStr
-
-    lookupLabel :: String -> Integer
-    lookupLabel label = 
-      case lookup label labelMap of
-        Nothing -> error $ "Label does not exist: " ++ label
-        Just index -> index
-
-readPrimTokens :: [String] -> (Maybe String, Prim)
-readPrimTokens instr@[label, primStr, theta, phi, b, a] 
-  | ":" `isSuffixOf` label = 
-    (\(_, prim) -> (Just $ trimLast label, prim)) $ readPrimTokens (tail instr)
-  | otherwise = error $ "Malformed label: " ++ label
-readPrimTokens instr@[primStr, theta, phi, b, a] 
-  | primStr /= "prim" = error $ "Not a prim instruction: " ++ concat instr
-  | otherwise = (Nothing, Prim (tpFromString theta) 
-                               (tpFromString phi) 
-                               b 
-                               a)
-
-trimLast :: String -> String
-trimLast [] = []
-trimLast (x:[]) = []
-trimLast (x:xs) = x : trimLast xs
-
--- ASSEMBLE
-
-assemble :: [Instruction] -> Algorithm
-assemble insts =
-  let aSet = unionAll $ map aSetFromInstruction insts
-   in Algorithm (fromIntegral $ length insts) aSet insts
+assemble :: String -> Algorithm
+assemble content = 
+  let instructions = primsToInstructions . readPrims . lines $ content
+      n = fromIntegral $ length instructions
+      aSet = unionAll $ map aSetFromInstruction instructions
+   in Algorithm n aSet instructions
 
 unionAll :: Eq a => [[a]] -> [a]
 unionAll = foldr union []
@@ -104,15 +34,88 @@ unionAll = foldr union []
 aSetFromInstruction :: Instruction -> String
 aSetFromInstruction inst = union (instTheta inst) (instPhi inst)
 
-readInt :: String -> Integer
-readInt str = 
-  case readMaybe str of
-    Nothing -> error $ "Unable to read integer: " ++ str
-    Just num -> num
+-- Prim to Instruction
+
+primsToInstructions :: [Prim] -> [Instruction]
+primsToInstructions prims = map primToInstruction prims
+  where
+    -- where func because it depends on finding labels in prims
+    primToInstruction :: Prim -> Instruction
+    primToInstruction (Prim { primIndex = index
+                            , primLabel = label
+                            , primTheta = theta
+                            , primPhi = phi
+                            , primB = b
+                            , primA = a 
+                            }) = 
+      Instruction 
+        { instJ = index
+        , instTheta = theta
+        , instPhi = phi
+        , instB = primToInstrAB ((+ index) <$> b) -- will add the index if integer offset
+        , instA = primToInstrAB ((+ index) <$> a)
+        }
+
+    primToInstrAB :: Either String Integer -> Integer
+    primToInstrAB (Right j) = j
+    primToInstrAB (Left label) = labelToJ label
+
+    labelToJ :: String -> Integer
+    labelToJ label = findIndexForLabel label prims
+
+-- Prim labels
+
+findIndexForLabel :: String -> [Prim] -> Integer
+findIndexForLabel label = primIndex . findPrimByLabel label
+
+findPrimByLabel :: String -> [Prim] -> Prim
+findPrimByLabel label prims = 
+  case find (primHasLabel label) prims of
+    Nothing -> error $ "No instruction for label: " ++ label
+    Just prim -> prim
 
 find :: (a -> Bool) -> [a] -> Maybe a
 find pred xs = 
-  case filter pred xs of 
+  case filter pred xs of
     [] -> Nothing
     (x:_) -> Just x
 
+-- Prim reading
+
+readPrims :: [String] -> [Prim]
+readPrims primLines = map (uncurry readPrim) $ zip [0..] primLines
+
+readPrim :: Integer -> String -> Prim
+readPrim index = readPrimWords index . words
+
+readPrimWords :: Integer -> [String] -> Prim
+readPrimWords index instrWs@[label, name, theta, phi, b, a] = 
+  case extractLabel label of
+    Nothing -> error $ "Invalid label: " ++ unwords instrWs
+    label   -> (readPrimWords index $ tail instrWs) { primLabel = label }
+readPrimWords index instrWs@["prim", theta, phi, b, a] =
+  Prim { primIndex = index
+       , primLabel = Nothing
+       , primTheta = readPrimThetaPhi theta
+       , primPhi = readPrimThetaPhi phi
+       , primB = readPrimAB b
+       , primA = readPrimAB a
+       }
+readPrimWords _ instrWs = error $ "Not a valid instruction: " ++ unwords instrWs
+
+readPrimThetaPhi :: String -> String
+readPrimThetaPhi str =
+  if str == "_"
+     then ""
+     else str
+
+readPrimAB :: String -> Either String Integer
+readPrimAB str = 
+  if isDigit . head $ str
+     then Right $ read str
+     else Left str
+
+extractLabel :: String -> Maybe String
+extractLabel [] = Nothing
+extractLabel (c:[]) = if c == ':' then Just [] else Nothing 
+extractLabel (c:cs) = (c:) <$> extractLabel cs
