@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4519b31e2c26ccdb967e0322d83dc073b41f8fd0c10502b60b90bf3a7fcb60d0
+-- hash: 036decdc47ebaf930d669bf51891447c1921a699bcde4669365d7d4e18469a28
 
 name:           formalgo
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       Algorithm
       Algorithms
       Assemble
+      Assemble2
       Eval
       Lib
       Parser

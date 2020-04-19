@@ -15,13 +15,16 @@ prim c a  0  1
 
 [v2]
 
-start:     prim b _ bmatch bnotmatch
+start:     
+  prim b _ bmatch bnotmatch
 
-bmatch:    prim a cd 0 1
-           prim d a  0 start
+bmatch:    
+  prim a cd 0 1
+  prim d a  0 start
 
-bnotmatch: prim a _ 0 1
-           prim c a  0 1
+bnotmatch: 
+  prim a _ 0 1
+  prim c a  0 1
 
 [v3] 
 

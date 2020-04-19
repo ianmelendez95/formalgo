@@ -1,8 +1,10 @@
 module Assemble where
 
 import System.IO
-import Data.Char (isSpace)
-import Data.List (union)
+import Data.Char (isSpace, isDigit)
+import Data.List (union, isSuffixOf)
+import Data.Maybe (mapMaybe)
+import Text.Read (readMaybe)
 import Parser
 
 import Algorithm
@@ -14,8 +16,8 @@ data Header = Header
 data Prim = Prim
   { primTheta :: String
   , primPhi   :: String
-  , primB     :: Integer
-  , primA     :: Integer
+  , primB     :: String
+  , primA     :: String
   } deriving (Show)
 
 -- IO 
@@ -26,32 +28,91 @@ assembleFile filePath = (readAlgorithm . lines) <$> readFile filePath
 -- READ
 
 readAlgorithm :: [String] -> Algorithm
-readAlgorithm instrLines = assemble $ map (readPrim . words) instrLines
+readAlgorithm instrLines = assemble $ doRead instrLines
 
-readPrim :: [String] -> Prim
-readPrim instr@[primStr, theta, phi, b, a] 
+-- NEW READ
+
+doRead :: [String] -> [Instruction]
+doRead instrLines = 
+  let indexedPrims = indexPrims . parsePrims $ instrLines
+   in primsToInstructions (extractLabelMap indexedPrims) indexedPrims
+
+parsePrims :: [String] -> [(Maybe String, Prim)] -- (maybe label, prim)
+parsePrims = map (readPrimTokens . words)
+
+indexPrims :: [(Maybe String, Prim)] -> [(Integer, (Maybe String, Prim))]
+indexPrims = zip [0..]
+
+extractLabelMap :: [(Integer, (Maybe String, Prim))] 
+                -> [(String, Integer)]
+extractLabelMap = mapMaybe extractLabelEntry
+
+primsToInstructions :: [(String, Integer)] 
+                    -> [(Integer, (Maybe String, Prim))] 
+                    -> [Instruction]
+primsToInstructions labelMap = map (primToInstruction labelMap)
+
+extractLabelEntry :: (Integer, (Maybe String, Prim)) -> Maybe (String, Integer)
+extractLabelEntry (index, (Just label, _)) = Just (label, index)
+extractLabelEntry _ = Nothing
+
+primToInstruction :: [(String, Integer)] 
+                  -> (Integer, (Maybe String, Prim)) 
+                  -> Instruction
+primToInstruction labelMap (index, (_, Prim theta phi b a)) = 
+  Instruction index theta phi (resolveOffset b) (resolveOffset a)
+  where
+    resolveOffset :: String -> Integer
+    resolveOffset offsetStr@(c:cs) = 
+      if isDigit c 
+         then readInt offsetStr
+         else lookupLabel offsetStr
+
+    lookupLabel :: String -> Integer
+    lookupLabel label = 
+      case lookup label labelMap of
+        Nothing -> error $ "Label does not exist: " ++ label
+        Just index -> index
+
+readPrimTokens :: [String] -> (Maybe String, Prim)
+readPrimTokens instr@[label, primStr, theta, phi, b, a] 
+  | ":" `isSuffixOf` label = 
+    (\(_, prim) -> (Just $ trimLast label, prim)) $ readPrimTokens (tail instr)
+  | otherwise = error $ "Malformed label: " ++ label
+readPrimTokens instr@[primStr, theta, phi, b, a] 
   | primStr /= "prim" = error $ "Not a prim instruction: " ++ concat instr
-  | otherwise = Prim (tpFromString theta) (tpFromString phi) (read b) (read a)
+  | otherwise = (Nothing, Prim (tpFromString theta) 
+                               (tpFromString phi) 
+                               b 
+                               a)
+
+trimLast :: String -> String
+trimLast [] = []
+trimLast (x:[]) = []
+trimLast (x:xs) = x : trimLast xs
 
 -- ASSEMBLE
 
-assemble :: [Prim] -> Algorithm
-assemble prims =
-  let aSet = unionAll $ map aSetFromPrim prims
-      instructions = assembleInstructions 0 prims
-   in Algorithm (fromIntegral $ length instructions) aSet instructions
+assemble :: [Instruction] -> Algorithm
+assemble insts =
+  let aSet = unionAll $ map aSetFromInstruction insts
+   in Algorithm (fromIntegral $ length insts) aSet insts
 
 unionAll :: Eq a => [[a]] -> [a]
 unionAll = foldr union []
 
-aSetFromPrim :: Prim -> String
-aSetFromPrim prim = union (primTheta prim) (primPhi prim)
+aSetFromInstruction :: Instruction -> String
+aSetFromInstruction inst = union (instTheta inst) (instPhi inst)
 
-assembleInstructions :: Integer -> [Prim] -> [Instruction]
-assembleInstructions _ [] = []
-assembleInstructions instrNum ((Prim theta phi b a):prims) = 
-  (Instruction instrNum 
-               theta
-               phi
-               (instrNum + b) 
-               (instrNum + a)) : (assembleInstructions (instrNum + 1) prims)
+readInt :: String -> Integer
+readInt str = 
+  case readMaybe str of
+    Nothing -> error $ "Unable to read integer: " ++ str
+    Just num -> num
+
+find :: (a -> Bool) -> [a] -> Maybe a
+find pred xs = 
+  case filter pred xs of 
+    [] -> Nothing
+    (x:_) -> Just x
+

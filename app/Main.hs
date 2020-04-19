@@ -6,7 +6,7 @@ import Data.List (isSuffixOf)
 import Eval (evalAlgorithm)
 import Algorithm
 
-import Assemble
+import Assemble2 (assemble)
 
 import Lib
 
@@ -31,8 +31,8 @@ executeFa fileName = do
 
 assembleFasm :: String -> IO ()
 assembleFasm file = do
+  algo <- assemble <$> readFile file
   let newFile = take (length file - 5) file ++ ".fa"
-  algo <- assembleFile file
   writeFile newFile (algorithmToString algo)
 
 
