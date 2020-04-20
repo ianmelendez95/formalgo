@@ -1,7 +1,7 @@
            prim _ aaaa 1 1
            prim _ bbb 1 1
 start:     prim b _  bmatch bnotmatch
-bmatch:    prim a cd 0  1
+bmatch:    repa a cd
            prim d a  0  start
 bnotmatch: prim a _  0  1
-           prim c a  0  1
+           repa c a

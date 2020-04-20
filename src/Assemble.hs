@@ -15,16 +15,59 @@ data PInstr = PInstr { pInstrIndex  :: Integer
                      }
 
 -- Assembler Instruction
-data AInstr = APrim Prim deriving (Show)
+data AInstr 
+  = APrim Prim 
+  | ARepa Repa
+  deriving (Show)
+
+data Repa = 
+  Repa { repaIndex :: Integer
+       , repaLabel :: Maybe String
+       , repaTheta :: String
+       , repaPhi   :: String
+       } deriving (Show)
 
 primsFromAInstr :: AInstr -> [Prim]
 primsFromAInstr (APrim prim) = [prim]
+primsFromAInstr (ARepa repa) = [primFromRepa repa]
 
 aInstrFromPInstr :: PInstr -> AInstr
 aInstrFromPInstr instr@(PInstr { pInstrName = "prim" }) = 
   APrim $ primFromPInstr instr
+aInstrFromPInstr instr@(PInstr { pInstrName = "repa" }) =
+  ARepa $ repaFromPInstr instr
 aInstrFromPInstr instr = 
   error $ "Unable to resolve instruction: " ++ pInstrSource instr
+
+primFromRepa :: Repa -> Prim
+primFromRepa (Repa { repaIndex = index
+                   , repaLabel = label
+                   , repaTheta = theta
+                   , repaPhi   = phi
+                   }) = 
+  Prim { primIndex = index
+       , primLabel = label
+       , primTheta = theta
+       , primPhi   = phi
+       , primB     = Right 0
+       , primA     = Right 1
+       }
+
+repaFromPInstr :: PInstr -> Repa
+repaFromPInstr (PInstr { pInstrIndex  = index
+                       , pInstrLabel  = label
+                       , pInstrName   = "repa"
+                       , pInstrParams = [theta, phi]
+                       }) = 
+  Repa { repaIndex = index
+       , repaLabel = label
+       , repaTheta = readPrimThetaPhi theta
+       , repaPhi   = readPrimThetaPhi phi
+       }
+repaFromPInstr instr = 
+  error $ "Malformed repa instruction -" 
+            ++ " expect 'repa theta phi': " 
+            ++ pInstrSource instr
 
 primFromPInstr :: PInstr -> Prim
 primFromPInstr (PInstr { pInstrIndex  = index
