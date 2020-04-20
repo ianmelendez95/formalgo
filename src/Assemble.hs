@@ -4,6 +4,68 @@ import Algorithm
 import Data.List (isSuffixOf, union)
 import Data.Char (isDigit)
 
+-- NEW PARSING
+  
+-- Parsed Instruction
+data PInstr = PInstr { pInstrIndex  :: Integer
+                     , pInstrLabel  :: Maybe String 
+                     , pInstrName   :: String
+                     , pInstrParams :: [String]
+                     , pInstrSource :: String -- for errors
+                     }
+
+-- Assembler Instruction
+data AInstr = APrim Prim deriving (Show)
+
+primsFromAInstr :: AInstr -> [Prim]
+primsFromAInstr (APrim prim) = [prim]
+
+aInstrFromPInstr :: PInstr -> AInstr
+aInstrFromPInstr instr@(PInstr { pInstrName = "prim" }) = 
+  APrim $ primFromPInstr instr
+aInstrFromPInstr instr = 
+  error $ "Unable to resolve instruction: " ++ pInstrSource instr
+
+primFromPInstr :: PInstr -> Prim
+primFromPInstr (PInstr { pInstrIndex  = index
+                       , pInstrLabel  = label
+                       , pInstrName   = "prim"
+                       , pInstrParams = [theta, phi, b, a]
+                       }) = 
+  Prim { primIndex = index
+       , primLabel = label
+       , primTheta = readPrimThetaPhi theta
+       , primPhi   = readPrimThetaPhi phi
+       , primB     = readPrimAB b
+       , primA     = readPrimAB a
+       }
+primFromPInstr instr = 
+  error $ "Malformed prim instruction -" 
+            ++ " expect 'prim theta phi b-offset a-offset': " 
+            ++ pInstrSource instr
+
+readPInstrs :: [String] -> [PInstr]
+readPInstrs instrLines = map (uncurry readPInstr) $ zip [0..] instrLines
+
+readPInstr :: Integer -> String -> PInstr
+readPInstr index instrStr = 
+  case words instrStr of
+    (w1:w2:ws) -> 
+      case extractLabel w1 of
+        Nothing -> PInstr { pInstrIndex  = index
+                          , pInstrLabel  = Nothing
+                          , pInstrName   = w1
+                          , pInstrParams = (w2:ws)
+                          , pInstrSource = instrStr
+                          }
+        label   -> PInstr { pInstrIndex  = index
+                          , pInstrLabel  = label 
+                          , pInstrName   = w2
+                          , pInstrParams = ws
+                          , pInstrSource = instrStr
+                          }
+    _ -> error $ "Unable to read instruction: " ++ instrStr
+
 -- Prim = all of the information we can deduce during parsing
   
 data Prim = Prim
@@ -23,8 +85,12 @@ primHasLabel _ _ = False
 
 assemble :: String -> Algorithm
 assemble content = 
-  let instructions = primsToInstructions . readPrims . lines $ content
-      n = fromIntegral $ length instructions
+  let pInstrs = readPInstrs . lines $ content
+      aInstrs = map aInstrFromPInstr pInstrs
+      prims   = concatMap primsFromAInstr aInstrs
+
+      instructions = primsToInstructions prims
+      n    = fromIntegral $ length instructions
       aSet = unionAll $ map aSetFromInstruction instructions
    in Algorithm n aSet instructions
 
