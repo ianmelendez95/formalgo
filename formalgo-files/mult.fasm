@@ -2,6 +2,7 @@
            prim _ bbb 1 1
 start:     prim b _  bmatch bnotmatch
 bmatch:    repa a cd
-           prim d a  0  start
+           repa d a
+           goto start
 bnotmatch: prim a _  0  1
            repa c a

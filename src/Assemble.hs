@@ -18,6 +18,7 @@ data PInstr = PInstr { pInstrIndex  :: Integer
 data AInstr 
   = APrim Prim 
   | ARepa Repa
+  | AGoto Goto
   deriving (Show)
 
 data Repa = 
@@ -27,17 +28,24 @@ data Repa =
        , repaPhi   :: String
        } deriving (Show)
 
+data Goto =
+  Goto { gotoIndex  :: Integer
+       , gotoLabel  :: Maybe String
+       , gotoGoto   :: String
+       } deriving (Show)
+
+
 primsFromAInstr :: AInstr -> [Prim]
 primsFromAInstr (APrim prim) = [prim]
 primsFromAInstr (ARepa repa) = [primFromRepa repa]
+primsFromAInstr (AGoto goto) = [primFromGoto goto]
 
 aInstrFromPInstr :: PInstr -> AInstr
-aInstrFromPInstr instr@(PInstr { pInstrName = "prim" }) = 
-  APrim $ primFromPInstr instr
-aInstrFromPInstr instr@(PInstr { pInstrName = "repa" }) =
-  ARepa $ repaFromPInstr instr
-aInstrFromPInstr instr = 
-  error $ "Unable to resolve instruction: " ++ pInstrSource instr
+aInstrFromPInstr instr@(PInstr { pInstrName = name }) 
+  | name == "prim" = APrim $ primFromPInstr instr
+  | name == "repa" = ARepa $ repaFromPInstr instr
+  | name == "goto" = AGoto $ gotoFromPInstr instr
+  | otherwise = error $ "Unable to resolve instruction: " ++ pInstrSource instr
 
 primFromRepa :: Repa -> Prim
 primFromRepa (Repa { repaIndex = index
@@ -51,6 +59,19 @@ primFromRepa (Repa { repaIndex = index
        , primPhi   = phi
        , primB     = Right 0
        , primA     = Right 1
+       }
+
+primFromGoto :: Goto -> Prim
+primFromGoto (Goto { gotoIndex = index
+                   , gotoLabel = label
+                   , gotoGoto  = goto
+                   }) = 
+  Prim { primIndex = index
+       , primLabel = label
+       , primTheta = "_"
+       , primPhi   = "_"
+       , primB     = readPrimAB goto
+       , primA     = readPrimAB goto
        }
 
 repaFromPInstr :: PInstr -> Repa
@@ -67,6 +88,21 @@ repaFromPInstr (PInstr { pInstrIndex  = index
 repaFromPInstr instr = 
   error $ "Malformed repa instruction -" 
             ++ " expect 'repa theta phi': " 
+            ++ pInstrSource instr
+
+gotoFromPInstr :: PInstr -> Goto
+gotoFromPInstr (PInstr { pInstrIndex  = index
+                       , pInstrLabel  = label
+                       , pInstrName   = "goto"
+                       , pInstrParams = [goto]
+                       }) = 
+  Goto { gotoIndex = index
+       , gotoLabel = label
+       , gotoGoto  = goto
+       }
+gotoFromPInstr instr = 
+  error $ "Malformed goto instruction -" 
+            ++ " expect 'goto (offset | label)': " 
             ++ pInstrSource instr
 
 primFromPInstr :: PInstr -> Prim
