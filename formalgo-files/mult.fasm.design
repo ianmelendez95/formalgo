@@ -1,16 +1,6 @@
-[v2]
-start:     
-  prim b _ bmatch bnotmatch
-
-bmatch:    
-  prim a cd 0 1
-  prim d a  0 start
-
-bnotmatch: 
-  prim a _ 0 1
-  prim c a  0 1
-
 [v3] 
+           prep b 4
+           prep a 3
 start:     elem b bmatch bnotmatch
 
 bmatch:    del  b

@@ -140,6 +140,7 @@ data AInstr
   = APrim Prim 
   | ARepa Repa
   | AGoto Goto
+  | APrep Prep
   deriving (Show)
 
 aInstrFromPInstr :: PInstr -> AInstr
@@ -147,12 +148,40 @@ aInstrFromPInstr instr@(PInstr { pInstrName = name })
   | name == "prim" = APrim $ primFromPInstr instr
   | name == "repa" = ARepa $ repaFromPInstr instr
   | name == "goto" = AGoto $ gotoFromPInstr instr
+  | name == "prep" = APrep $ prepFromPInstr instr
   | otherwise = error $ "Unable to resolve instruction: " ++ pInstrSource instr
 
 primFromAInstr :: AInstr -> Prim
 primFromAInstr (APrim prim) = prim
 primFromAInstr (ARepa repa) = primFromRepa repa
 primFromAInstr (AGoto goto) = primFromGoto goto
+primFromAInstr (APrep prep) = primFromPrep prep
+
+-- PREP
+
+data Prep = 
+  Prep { prepPhi :: String } deriving (Show)
+
+prepFromPInstr :: PInstr -> Prep
+prepFromPInstr (PInstr { pInstrName   = "prep"
+                       , pInstrParams = [phi]
+                       , pInstrSource = source
+                       }) = 
+  if phi == "_" then throwError else Prep { prepPhi = phi }
+  where 
+    throwError = error $ "prep: Phi must be a non-empty value: " ++ source
+prepFromPInstr instr = 
+  error $ "Malformed prep instruction -" 
+            ++ " expect 'prep phi': " 
+            ++ pInstrSource instr
+
+primFromPrep :: Prep -> Prim
+primFromPrep (Prep { prepPhi = phi }) = 
+  Prim { primTheta = ""
+       , primPhi   = phi
+       , primB     = Right 1
+       , primA     = Right 1
+       }
 
 -- REPA
 

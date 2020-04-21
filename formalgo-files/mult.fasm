@@ -1,5 +1,5 @@
-           prim _ aaaa 1 1
-           prim _ bbb 1 1
+           prep bbb
+           prep aaaa
 start:     prim b _  bmatch bnotmatch
 bmatch:    repa a cd
            repa d a
