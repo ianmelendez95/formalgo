@@ -4,171 +4,24 @@ import Algorithm
 import Data.List (isSuffixOf, union)
 import Data.Char (isDigit)
 
--- NEW PARSING
-  
--- Parsed Instruction
-data PInstr = PInstr { pInstrIndex  :: Integer
-                     , pInstrLabel  :: Maybe String 
-                     , pInstrName   :: String
-                     , pInstrParams :: [String]
-                     , pInstrSource :: String -- for errors
-                     }
-
--- Assembler Instruction
-data AInstr 
-  = APrim Prim 
-  | ARepa Repa
-  | AGoto Goto
-  deriving (Show)
-
-data Repa = 
-  Repa { repaIndex :: Integer
-       , repaLabel :: Maybe String
-       , repaTheta :: String
-       , repaPhi   :: String
-       } deriving (Show)
-
-data Goto =
-  Goto { gotoIndex  :: Integer
-       , gotoLabel  :: Maybe String
-       , gotoGoto   :: String
-       } deriving (Show)
-
-
-primsFromAInstr :: AInstr -> [Prim]
-primsFromAInstr (APrim prim) = [prim]
-primsFromAInstr (ARepa repa) = [primFromRepa repa]
-primsFromAInstr (AGoto goto) = [primFromGoto goto]
-
-aInstrFromPInstr :: PInstr -> AInstr
-aInstrFromPInstr instr@(PInstr { pInstrName = name }) 
-  | name == "prim" = APrim $ primFromPInstr instr
-  | name == "repa" = ARepa $ repaFromPInstr instr
-  | name == "goto" = AGoto $ gotoFromPInstr instr
-  | otherwise = error $ "Unable to resolve instruction: " ++ pInstrSource instr
-
-primFromRepa :: Repa -> Prim
-primFromRepa (Repa { repaIndex = index
-                   , repaLabel = label
-                   , repaTheta = theta
-                   , repaPhi   = phi
-                   }) = 
-  Prim { primIndex = index
-       , primLabel = label
-       , primTheta = theta
-       , primPhi   = phi
-       , primB     = Right 0
-       , primA     = Right 1
-       }
-
-primFromGoto :: Goto -> Prim
-primFromGoto (Goto { gotoIndex = index
-                   , gotoLabel = label
-                   , gotoGoto  = goto
-                   }) = 
-  Prim { primIndex = index
-       , primLabel = label
-       , primTheta = "_"
-       , primPhi   = "_"
-       , primB     = readPrimAB goto
-       , primA     = readPrimAB goto
-       }
-
-repaFromPInstr :: PInstr -> Repa
-repaFromPInstr (PInstr { pInstrIndex  = index
-                       , pInstrLabel  = label
-                       , pInstrName   = "repa"
-                       , pInstrParams = [theta, phi]
-                       }) = 
-  Repa { repaIndex = index
-       , repaLabel = label
-       , repaTheta = readPrimThetaPhi theta
-       , repaPhi   = readPrimThetaPhi phi
-       }
-repaFromPInstr instr = 
-  error $ "Malformed repa instruction -" 
-            ++ " expect 'repa theta phi': " 
-            ++ pInstrSource instr
-
-gotoFromPInstr :: PInstr -> Goto
-gotoFromPInstr (PInstr { pInstrIndex  = index
-                       , pInstrLabel  = label
-                       , pInstrName   = "goto"
-                       , pInstrParams = [goto]
-                       }) = 
-  Goto { gotoIndex = index
-       , gotoLabel = label
-       , gotoGoto  = goto
-       }
-gotoFromPInstr instr = 
-  error $ "Malformed goto instruction -" 
-            ++ " expect 'goto (offset | label)': " 
-            ++ pInstrSource instr
-
-primFromPInstr :: PInstr -> Prim
-primFromPInstr (PInstr { pInstrIndex  = index
-                       , pInstrLabel  = label
-                       , pInstrName   = "prim"
-                       , pInstrParams = [theta, phi, b, a]
-                       }) = 
-  Prim { primIndex = index
-       , primLabel = label
-       , primTheta = readPrimThetaPhi theta
-       , primPhi   = readPrimThetaPhi phi
-       , primB     = readPrimAB b
-       , primA     = readPrimAB a
-       }
-primFromPInstr instr = 
-  error $ "Malformed prim instruction -" 
-            ++ " expect 'prim theta phi b-offset a-offset': " 
-            ++ pInstrSource instr
-
-readPInstrs :: [String] -> [PInstr]
-readPInstrs instrLines = map (uncurry readPInstr) $ zip [0..] instrLines
-
-readPInstr :: Integer -> String -> PInstr
-readPInstr index instrStr = 
-  case words instrStr of
-    (w1:w2:ws) -> 
-      case extractLabel w1 of
-        Nothing -> PInstr { pInstrIndex  = index
-                          , pInstrLabel  = Nothing
-                          , pInstrName   = w1
-                          , pInstrParams = (w2:ws)
-                          , pInstrSource = instrStr
-                          }
-        label   -> PInstr { pInstrIndex  = index
-                          , pInstrLabel  = label 
-                          , pInstrName   = w2
-                          , pInstrParams = ws
-                          , pInstrSource = instrStr
-                          }
-    _ -> error $ "Unable to read instruction: " ++ instrStr
-
--- Prim = all of the information we can deduce during parsing
-  
-data Prim = Prim
-  { primIndex :: Integer
-  , primLabel :: Maybe String
-  , primTheta :: String
-  , primPhi   :: String
-  , primB     :: Either String Integer -- label | offset
-  , primA     :: Either String Integer -- label | offset
-  } deriving (Show)
-
-primHasLabel :: String -> Prim -> Bool
-primHasLabel label (Prim { primLabel = (Just pLabel) }) = label == pLabel
-primHasLabel _ _ = False
-
--- Assembler
+-- 
+-- Assembly
+--
 
 assemble :: String -> Algorithm
 assemble content = 
-  let pInstrs = readPInstrs . lines $ content
-      aInstrs = map aInstrFromPInstr pInstrs
-      prims   = concatMap primsFromAInstr aInstrs
+  let pInstrs :: [IL PInstr]
+      pInstrs = readPInstrs . lines $ content
 
+      aInstrs :: [IL AInstr]
+      aInstrs = map (aInstrFromPInstr <$>) pInstrs
+
+      prims :: [IL Prim]
+      prims   = map (primFromAInstr <$>) aInstrs
+
+      instructions :: [Instruction]
       instructions = primsToInstructions prims
+
       n    = fromIntegral $ length instructions
       aSet = unionAll $ map aSetFromInstruction instructions
    in Algorithm n aSet instructions
@@ -181,18 +34,16 @@ aSetFromInstruction inst = union (instTheta inst) (instPhi inst)
 
 -- Prim to Instruction
 
-primsToInstructions :: [Prim] -> [Instruction]
+primsToInstructions :: [IL Prim] -> [Instruction]
 primsToInstructions prims = map primToInstruction prims
   where
     -- where func because it depends on finding labels in prims
-    primToInstruction :: Prim -> Instruction
-    primToInstruction (Prim { primIndex = index
-                            , primLabel = label
-                            , primTheta = theta
-                            , primPhi = phi
-                            , primB = b
-                            , primA = a 
-                            }) = 
+    primToInstruction :: IL Prim -> Instruction
+    primToInstruction (IL index _ (Prim { primTheta = theta
+                                        , primPhi = phi
+                                        , primB = b
+                                        , primA = a 
+                                        })) = 
       Instruction 
         { instJ = index
         , instTheta = theta
@@ -208,16 +59,44 @@ primsToInstructions prims = map primToInstruction prims
     labelToJ :: String -> Integer
     labelToJ label = findIndexForLabel label prims
 
--- Prim labels
+-- Component reading
 
-findIndexForLabel :: String -> [Prim] -> Integer
-findIndexForLabel label = primIndex . findPrimByLabel label
+readInstrThetaPhi :: String -> String
+readInstrThetaPhi str =
+  if str == "_"
+     then ""
+     else str
 
-findPrimByLabel :: String -> [Prim] -> Prim
-findPrimByLabel label prims = 
-  case find (primHasLabel label) prims of
-    Nothing -> error $ "No instruction for label: " ++ label
-    Just prim -> prim
+readInstrAB :: String -> Either String Integer
+readInstrAB str = 
+  if isDigit . head $ str
+     then Right $ read str
+     else Left str
+
+--
+-- Instructions
+--
+
+-- Indexed, Labeled Data
+  
+data IL a = 
+  IL { ilIndex :: Integer 
+     , ilLabel :: Maybe String
+     , ilData  :: a }
+
+instance Functor IL where
+  fmap f (IL i l x) = IL i l (f x)
+
+ilHasLabel :: String -> IL a -> Bool
+ilHasLabel label = maybe False (label ==) . ilLabel
+
+findIndexForLabel :: String -> [IL a] -> Integer
+findIndexForLabel label = ilIndex . findILByLabel label
+
+findILByLabel :: String -> [IL a] -> IL a
+findILByLabel label = maybe throwError id . find (ilHasLabel label)
+  where
+    throwError = error $ "No instruction for label: " ++ label
 
 find :: (a -> Bool) -> [a] -> Maybe a
 find pred xs = 
@@ -225,42 +104,126 @@ find pred xs =
     [] -> Nothing
     (x:_) -> Just x
 
--- Prim reading
+-- Parsed Instruction
+  
+data PInstr = PInstr { pInstrName   :: String
+                     , pInstrParams :: [String]
+                     , pInstrSource :: String -- for errors
+                     }
 
-readPrims :: [String] -> [Prim]
-readPrims primLines = map (uncurry readPrim) $ zip [0..] primLines
+readPInstrs :: [String] -> [IL PInstr]
+readPInstrs instrLines = map (uncurry readPInstr) $ zip [0..] instrLines
 
-readPrim :: Integer -> String -> Prim
-readPrim index = readPrimWords index . words
-
-readPrimWords :: Integer -> [String] -> Prim
-readPrimWords index instrWs@[label, name, theta, phi, b, a] = 
-  case extractLabel label of
-    Nothing -> error $ "Invalid label: " ++ unwords instrWs
-    label   -> (readPrimWords index $ tail instrWs) { primLabel = label }
-readPrimWords index instrWs@["prim", theta, phi, b, a] =
-  Prim { primIndex = index
-       , primLabel = Nothing
-       , primTheta = readPrimThetaPhi theta
-       , primPhi = readPrimThetaPhi phi
-       , primB = readPrimAB b
-       , primA = readPrimAB a
-       }
-readPrimWords _ instrWs = error $ "Not a valid instruction: " ++ unwords instrWs
-
-readPrimThetaPhi :: String -> String
-readPrimThetaPhi str =
-  if str == "_"
-     then ""
-     else str
-
-readPrimAB :: String -> Either String Integer
-readPrimAB str = 
-  if isDigit . head $ str
-     then Right $ read str
-     else Left str
+readPInstr :: Integer -> String -> IL PInstr
+readPInstr index instrStr = 
+  case words instrStr of
+    (w1:w2:ws) -> 
+      case extractLabel w1 of
+        Nothing -> IL index Nothing (PInstr { pInstrName   = w1
+                                            , pInstrParams = (w2:ws)
+                                            , pInstrSource = instrStr
+                                            })
+        label   -> IL index label   (PInstr { pInstrName   = w2
+                                            , pInstrParams = ws
+                                            , pInstrSource = instrStr
+                                            })
+    _ -> error $ "Unable to read instruction: " ++ instrStr
 
 extractLabel :: String -> Maybe String
 extractLabel [] = Nothing
 extractLabel (c:[]) = if c == ':' then Just [] else Nothing 
 extractLabel (c:cs) = (c:) <$> extractLabel cs
+
+-- Assembler Instructions
+  
+data AInstr 
+  = APrim Prim 
+  | ARepa Repa
+  | AGoto Goto
+  deriving (Show)
+
+aInstrFromPInstr :: PInstr -> AInstr
+aInstrFromPInstr instr@(PInstr { pInstrName = name }) 
+  | name == "prim" = APrim $ primFromPInstr instr
+  | name == "repa" = ARepa $ repaFromPInstr instr
+  | name == "goto" = AGoto $ gotoFromPInstr instr
+  | otherwise = error $ "Unable to resolve instruction: " ++ pInstrSource instr
+
+primFromAInstr :: AInstr -> Prim
+primFromAInstr (APrim prim) = prim
+primFromAInstr (ARepa repa) = primFromRepa repa
+primFromAInstr (AGoto goto) = primFromGoto goto
+
+-- REPA
+
+data Repa = 
+  Repa { repaTheta :: String
+       , repaPhi   :: String
+       } deriving (Show)
+
+repaFromPInstr :: PInstr -> Repa
+repaFromPInstr (PInstr { pInstrName   = "repa"
+                       , pInstrParams = [theta, phi]
+                       }) = 
+  Repa { repaTheta = readInstrThetaPhi theta
+       , repaPhi   = readInstrThetaPhi phi
+       }
+repaFromPInstr instr = 
+  error $ "Malformed repa instruction -" 
+            ++ " expect 'repa theta phi': " 
+            ++ pInstrSource instr
+
+primFromRepa :: Repa -> Prim
+primFromRepa (Repa { repaTheta = theta
+                   , repaPhi   = phi
+                   }) = 
+  Prim { primTheta = theta
+       , primPhi   = phi
+       , primB     = Right 0
+       , primA     = Right 1
+       }
+
+-- GOTO
+
+data Goto =
+  Goto { gotoGoto   :: String } deriving (Show)
+
+gotoFromPInstr :: PInstr -> Goto
+gotoFromPInstr (PInstr { pInstrName   = "goto", pInstrParams = [goto] }) = 
+  Goto { gotoGoto  = goto }
+gotoFromPInstr instr = 
+  error $ "Malformed goto instruction -" 
+            ++ " expect 'goto (offset | label)': " 
+            ++ pInstrSource instr
+
+primFromGoto :: Goto -> Prim
+primFromGoto (Goto { gotoGoto  = goto }) = 
+  Prim { primTheta = "_"
+       , primPhi   = "_"
+       , primB     = readInstrAB goto
+       , primA     = readInstrAB goto
+       }
+
+-- PRIM
+
+data Prim = Prim
+  { primTheta :: String
+  , primPhi   :: String
+  , primB     :: Either String Integer -- label | offset
+  , primA     :: Either String Integer -- label | offset
+  } deriving (Show)
+
+primFromPInstr :: PInstr -> Prim
+primFromPInstr (PInstr { pInstrName   = "prim"
+                       , pInstrParams = [theta, phi, b, a]
+                       }) = 
+  Prim { primTheta = readInstrThetaPhi theta
+       , primPhi   = readInstrThetaPhi phi
+       , primB     = readInstrAB b
+       , primA     = readInstrAB a
+       }
+primFromPInstr instr = 
+  error $ "Malformed prim instruction -" 
+            ++ " expect 'prim theta phi b-offset a-offset': " 
+            ++ pInstrSource instr
+
