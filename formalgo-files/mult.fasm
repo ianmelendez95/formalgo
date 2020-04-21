@@ -1,8 +1,9 @@
-           prep bbb
-           prep aaaa
-start:     prim b _  bmatch bnotmatch
-bmatch:    repa a cd
-           repa d a
-           goto start
-bnotmatch: prim a _  0  1
-           repa c a
+           prep  bbb
+           prep  aaaa
+start:     match b bmatch bnotmatch
+bmatch:    del   b
+           repa  a cd
+           repa  d a
+           goto  start
+bnotmatch: prim  a _ 0  1
+           repa  c a

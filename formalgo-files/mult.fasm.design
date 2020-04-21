@@ -1,7 +1,7 @@
 [v3] 
            prep b 4
            prep a 3
-start:     elem b bmatch bnotmatch
+start:     match b bmatch bnotmatch
 
 bmatch:    del  b
            repa a cd

@@ -137,25 +137,84 @@ extractLabel (c:cs) = (c:) <$> extractLabel cs
 -- Assembler Instructions
   
 data AInstr 
-  = APrim Prim 
-  | ARepa Repa
-  | AGoto Goto
-  | APrep Prep
+  = APrim  Prim 
+  | ARepa  Repa
+  | AGoto  Goto
+  | APrep  Prep
+  | AMatch Match
+  | ADel   Del
   deriving (Show)
 
 aInstrFromPInstr :: PInstr -> AInstr
 aInstrFromPInstr instr@(PInstr { pInstrName = name }) 
-  | name == "prim" = APrim $ primFromPInstr instr
-  | name == "repa" = ARepa $ repaFromPInstr instr
-  | name == "goto" = AGoto $ gotoFromPInstr instr
-  | name == "prep" = APrep $ prepFromPInstr instr
+  | name == "prim"  = APrim  $ primFromPInstr instr
+  | name == "repa"  = ARepa  $ repaFromPInstr instr
+  | name == "goto"  = AGoto  $ gotoFromPInstr instr
+  | name == "prep"  = APrep  $ prepFromPInstr instr
+  | name == "match" = AMatch $ matchFromPInstr instr
+  | name == "del"   = ADel   $ delFromPInstr instr
   | otherwise = error $ "Unable to resolve instruction: " ++ pInstrSource instr
 
 primFromAInstr :: AInstr -> Prim
-primFromAInstr (APrim prim) = prim
-primFromAInstr (ARepa repa) = primFromRepa repa
-primFromAInstr (AGoto goto) = primFromGoto goto
-primFromAInstr (APrep prep) = primFromPrep prep
+primFromAInstr (APrim prim)   = prim
+primFromAInstr (ARepa repa)   = primFromRepa repa
+primFromAInstr (AGoto goto)   = primFromGoto goto
+primFromAInstr (APrep prep)   = primFromPrep prep
+primFromAInstr (AMatch match) = primFromMatch match
+primFromAInstr (ADel del)     = primFromDel del
+
+-- DEL
+
+data Del = 
+  Del { delTheta :: String } deriving (Show)
+
+delFromPInstr :: PInstr -> Del
+delFromPInstr (PInstr { pInstrName   = "del", pInstrParams = [theta] }) = 
+  Del { delTheta = theta }
+delFromPInstr instr = 
+  error $ "Malformed del instruction -" 
+            ++ " expect 'del theta: " 
+            ++ pInstrSource instr
+
+primFromDel :: Del -> Prim
+primFromDel (Del { delTheta = theta }) = 
+  Prim { primTheta = theta
+       , primPhi   = ""
+       , primB     = Right 1
+       , primA     = Right 1
+       }
+
+-- MATCH
+
+data Match = 
+  Match { matchTheta :: String
+        , matchB     :: Either String Integer
+        , matchA     :: Either String Integer
+        } deriving (Show)
+
+matchFromPInstr :: PInstr -> Match
+matchFromPInstr (PInstr { pInstrName   = "match"
+                        , pInstrParams = [theta, b, a]
+                        }) = 
+  Match { matchTheta = theta
+        , matchB     = readInstrAB b
+        , matchA     = readInstrAB a
+        }
+matchFromPInstr instr = 
+  error $ "Malformed match instruction -" 
+            ++ " expect 'match phi matched-dest not-matched-dest': " 
+            ++ pInstrSource instr
+
+primFromMatch :: Match -> Prim
+primFromMatch (Match { matchTheta = theta
+                     , matchB     = b
+                     , matchA     = a
+                     }) = 
+  Prim { primTheta = theta
+       , primPhi   = theta
+       , primB     = b
+       , primA     = a
+       }
 
 -- PREP
 
