@@ -143,6 +143,7 @@ data AInstr
   | APrep  Prep
   | AMatch Match
   | ADel   Del
+  | ADela  Dela
   deriving (Show)
 
 aInstrFromPInstr :: PInstr -> AInstr
@@ -153,6 +154,7 @@ aInstrFromPInstr instr@(PInstr { pInstrName = name })
   | name == "prep"  = APrep  $ prepFromPInstr instr
   | name == "match" = AMatch $ matchFromPInstr instr
   | name == "del"   = ADel   $ delFromPInstr instr
+  | name == "dela"  = ADela  $ delaFromPInstr instr
   | otherwise = error $ "Unable to resolve instruction: " ++ pInstrSource instr
 
 primFromAInstr :: AInstr -> Prim
@@ -162,6 +164,28 @@ primFromAInstr (AGoto goto)   = primFromGoto goto
 primFromAInstr (APrep prep)   = primFromPrep prep
 primFromAInstr (AMatch match) = primFromMatch match
 primFromAInstr (ADel del)     = primFromDel del
+primFromAInstr (ADela dela)   = primFromDela dela
+
+-- DELA 
+
+data Dela = 
+  Dela { delaTheta :: String } deriving (Show)
+
+delaFromPInstr :: PInstr -> Dela
+delaFromPInstr (PInstr { pInstrName   = "dela", pInstrParams = [theta] }) = 
+  Dela { delaTheta = theta }
+delaFromPInstr instr = 
+  error $ "Malformed dela instruction -" 
+            ++ " expect 'dela theta: " 
+            ++ pInstrSource instr
+
+primFromDela :: Dela -> Prim
+primFromDela (Dela { delaTheta = theta }) = 
+  Prim { primTheta = theta
+       , primPhi   = ""
+       , primB     = Right 0
+       , primA     = Right 1
+       }
 
 -- DEL
 
