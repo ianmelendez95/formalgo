@@ -11,7 +11,7 @@ import Data.Char (isDigit)
 assemble :: String -> Algorithm
 assemble content = 
   let pInstrs :: [IL PInstr]
-      pInstrs = readPInstrs . nonEmptyLines $ content
+      pInstrs = readPInstrs . tokenLines $ content
 
       aInstrs :: [IL AInstr]
       aInstrs = map (aInstrFromPInstr <$>) pInstrs
@@ -26,8 +26,19 @@ assemble content =
       aSet = unionAll $ map aSetFromInstruction instructions
    in Algorithm n aSet instructions
 
-nonEmptyLines :: String -> [String]
-nonEmptyLines = filter (not . null) . lines
+-- get raw token lists, trim up to first comment, then filter empty token lists
+tokenLines :: String -> [[String]]
+tokenLines = 
+  (filter (not . null))                        -- filter empty token lists
+    . (map tokenLine)                          -- extract tokens
+    . lines                                    -- extract lines
+
+tokenLine :: String -> [String]
+tokenLine = (takeWhile $ not . isCommentToken) . words
+
+isCommentToken :: String -> Bool
+isCommentToken (';':_) = True
+isCommentToken _ = False
 
 unionAll :: Eq a => [[a]] -> [a]
 unionAll = foldr union []
@@ -112,23 +123,25 @@ data PInstr = PInstr { pInstrName   :: String
                      , pInstrSource :: String -- for errors
                      }
 
-readPInstrs :: [String] -> [IL PInstr]
-readPInstrs instrLines = map (uncurry readPInstr) $ zip [0..] instrLines
+readPInstrs :: [[String]] -> [IL PInstr]
+readPInstrs instrTokenLines = 
+  map (uncurry readPInstr) $ zip [0..] instrTokenLines
 
-readPInstr :: Integer -> String -> IL PInstr
-readPInstr index instrStr = 
-  case words instrStr of
-    (w1:w2:ws) -> 
-      case extractLabel w1 of
-        Nothing -> IL index Nothing (PInstr { pInstrName   = w1
-                                            , pInstrParams = (w2:ws)
-                                            , pInstrSource = instrStr
-                                            })
-        label   -> IL index label   (PInstr { pInstrName   = w2
-                                            , pInstrParams = ws
-                                            , pInstrSource = instrStr
-                                            })
-    _ -> error $ "Unable to read instruction: " ++ instrStr
+readPInstr :: Integer -> [String] -> IL PInstr
+readPInstr index instrWords@(w1:w2:ws) = 
+  case extractLabel w1 of
+    Nothing -> IL index Nothing (PInstr { pInstrName   = w1
+                                        , pInstrParams = (w2:ws)
+                                        , pInstrSource = instrStr
+                                        })
+    label   -> IL index label   (PInstr { pInstrName   = w2
+                                        , pInstrParams = ws
+                                        , pInstrSource = instrStr
+                                        })
+  where
+    instrStr = unwords instrWords
+readPInstr index tokens = 
+  error $ "Unable to read instruction: " ++ unwords tokens
 
 extractLabel :: String -> Maybe String
 extractLabel [] = Nothing
