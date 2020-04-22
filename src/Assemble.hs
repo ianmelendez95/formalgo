@@ -37,7 +37,7 @@ tokenLine :: String -> [String]
 tokenLine = (takeWhile $ not . isCommentToken) . words
 
 isCommentToken :: String -> Bool
-isCommentToken (';':_) = True
+isCommentToken ('-':'-':_) = True
 isCommentToken _ = False
 
 unionAll :: Eq a => [[a]] -> [a]

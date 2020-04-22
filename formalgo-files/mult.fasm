@@ -1,5 +1,5 @@
-           prep  bbb   ; b = 3
-           prep  aaaa  ; a = 4
+           prep  bbb   -- b = 3
+           prep  aaaa  -- a = 4
 
 start:     match b :bmatch :bnotmatch
 
