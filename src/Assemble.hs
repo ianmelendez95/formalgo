@@ -11,7 +11,7 @@ import Data.Char (isDigit)
 assemble :: String -> Algorithm
 assemble content = 
   let pInstrs :: [IL PInstr]
-      pInstrs = readPInstrs . lines $ content
+      pInstrs = readPInstrs . nonEmptyLines $ content
 
       aInstrs :: [IL AInstr]
       aInstrs = map (aInstrFromPInstr <$>) pInstrs
@@ -25,6 +25,9 @@ assemble content =
       n    = fromIntegral $ length instructions
       aSet = unionAll $ map aSetFromInstruction instructions
    in Algorithm n aSet instructions
+
+nonEmptyLines :: String -> [String]
+nonEmptyLines = filter (not . null) . lines
 
 unionAll :: Eq a => [[a]] -> [a]
 unionAll = foldr union []
