@@ -71,10 +71,8 @@ readInstrThetaPhi str =
      else str
 
 readInstrAB :: String -> Either String Integer
-readInstrAB str = 
-  if isDigit . head $ str
-     then Right $ read str
-     else Left str
+readInstrAB (':':ab) = Left ab
+readInstrAB offset = Right . read $ offset
 
 --
 -- Instructions

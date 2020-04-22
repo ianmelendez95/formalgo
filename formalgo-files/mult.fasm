@@ -1,12 +1,12 @@
            prep  bbb
            prep  aaaa
 
-start:     match b bmatch bnotmatch
+start:     match b :bmatch :bnotmatch
 
 bmatch:    del   b
            repa  a cd
            repa  d a
-           goto  start
+           goto  :start
 
 bnotmatch: dela  a
            repa  c a
