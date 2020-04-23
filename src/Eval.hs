@@ -14,6 +14,23 @@ evalAlgorithm (Algorithm n chars insts) input =
       | j == n = (sigma, j)
       | otherwise = doAlgo $ evalInstruction (findInstruction j insts) (sigma, j)
 
+scanAlgorithm :: Algorithm -> (String, Integer) -> [(String, Integer)]
+scanAlgorithm (Algorithm n chars insts) input = 
+  doAlgo validInput
+  where
+    doAlgo :: (String, Integer) -> [(String, Integer)]
+    doAlgo (sigma, j)
+      | j == n = [(sigma, j)]
+      | otherwise = 
+        let nextState = evalInstruction (findInstruction j insts) (sigma, j)
+         in nextState : doAlgo nextState
+
+    validInput :: (String, Integer)
+    validInput = 
+      if not . all (`elem` chars) $ fst input
+        then error $ "Invalid input: " ++ fst input
+        else input
+
 evalStep :: Algorithm -> (String, Integer) -> (String, Integer)
 evalStep (Algorithm n chars insts) (sigma, j) 
   | j == n = (sigma, j)

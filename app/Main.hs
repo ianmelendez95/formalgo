@@ -3,7 +3,7 @@ module Main where
 import System.IO (readFile)
 import System.Environment (getArgs)
 import Data.List (isSuffixOf)
-import Eval (evalAlgorithm)
+import Eval (scanAlgorithm)
 import Algorithm
 
 import Assemble (assemble)
@@ -23,7 +23,7 @@ handleArgs [file]
 executeFa :: String -> IO ()
 executeFa fileName = do
   algo <- algorithmFromString <$> readFile fileName
-  putStrLn . fst $ evalAlgorithm algo ("", 0)
+  putStrLn $ unlines . (map show) $ scanAlgorithm algo ("", 0)
 
 -- .fasm
 
