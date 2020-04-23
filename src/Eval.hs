@@ -19,11 +19,10 @@ scanAlgorithm (Algorithm n chars insts) input =
   doAlgo validInput
   where
     doAlgo :: (String, Integer) -> [(String, Integer)]
-    doAlgo (sigma, j)
-      | j == n = [(sigma, j)]
+    doAlgo curState@(_, j)
+      | j == n = [curState]
       | otherwise = 
-        let nextState = evalInstruction (findInstruction j insts) (sigma, j)
-         in nextState : doAlgo nextState
+          curState : doAlgo (evalInstruction (findInstruction j insts) curState)
 
     validInput :: (String, Integer)
     validInput = 
