@@ -1,0 +1,30 @@
+prep bbba     -- b = 3
+prep aaaaaaa -- a = 7
+
+-- Our input will be of the form a^[x]b^[y], and output a^[rem x y]
+-- aaaaaaabbb => a = 7, b = 3
+-- Since there are ab's, we reduce them to c's
+-- aaaaaaabbb -> cccaaaa
+-- Since there are no b's, we 'recover' b with the reduced a's
+-- cccaaaa -> bbbaaaa -> aaaabbb
+-- We again perform the full reduction
+-- aaaabbb -> abbb
+-- Now when we reduce the ab's, we'll be left with only b's
+-- abbb -> cbb
+-- The number of c's is our answer, so we remove b's and convert c->a
+-- cbb -> a
+
+start: match ab :abtoc :done
+
+abtoc: del  ab
+       prep c                     -- we prepend c to sort of 'store' bs
+       match ab :abtoc :checkdone -- continue ab->c
+
+checkdone: match b :done :prepstart
+
+prepstart: repa c b
+           sort a b
+           goto :start
+       
+done:  dela b   -- when we're done, num c's is answer
+       repa c a
