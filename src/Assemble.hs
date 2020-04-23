@@ -158,6 +158,7 @@ data AInstr
   | AMatch Match
   | ADel   Del
   | ADela  Dela
+  | ASort  Sort
   deriving (Show)
 
 aInstrFromPInstr :: PInstr -> AInstr
@@ -169,6 +170,7 @@ aInstrFromPInstr instr@(PInstr { pInstrName = name })
   | name == "match" = AMatch $ matchFromPInstr instr
   | name == "del"   = ADel   $ delFromPInstr instr
   | name == "dela"  = ADela  $ delaFromPInstr instr
+  | name == "sort"  = ASort  $ sortFromPInstr instr
   | otherwise = error $ "Unable to resolve instruction: " ++ pInstrSource instr
 
 primFromAInstr :: AInstr -> Prim
@@ -179,7 +181,37 @@ primFromAInstr (APrep prep)   = primFromPrep prep
 primFromAInstr (AMatch match) = primFromMatch match
 primFromAInstr (ADel del)     = primFromDel del
 primFromAInstr (ADela dela)   = primFromDela dela
+primFromAInstr (ASort sort)   = primFromSort sort
 
+-- SORT 
+
+data Sort = 
+  Sort { sortFirst  :: String
+       , sortLast :: String
+       } deriving (Show)
+
+sortFromPInstr :: PInstr -> Sort
+sortFromPInstr (PInstr { pInstrName   = "sort"
+                       , pInstrParams = [first, last] 
+                       }) = 
+  Sort { sortFirst  = first 
+       , sortLast   = last
+       }
+sortFromPInstr instr = 
+  error $ "Malformed sort instruction -" 
+            ++ " expect 'sort first last: " 
+            ++ pInstrSource instr
+
+primFromSort :: Sort -> Prim
+primFromSort (Sort { sortFirst = first 
+                   , sortLast  = last
+                   }) = 
+  Prim { primTheta = last ++ first
+       , primPhi   = first ++ last
+       , primB     = Right 0
+       , primA     = Right 1
+       }
+       
 -- DELA 
 
 data Dela = 
