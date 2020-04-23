@@ -1,0 +1,12 @@
+prep bbb
+prep aaaaa
+
+start: match ab :domin :done
+
+domin: del ab
+       prep c
+       goto :start
+
+done:  dela a
+       dela b
+       repa c a
