@@ -14,11 +14,11 @@ prep aaaaaaa -- a = 7
 -- The number of c's is our answer, so we remove b's and convert c->a
 -- cbb -> a
 
-start: match ab :abtoc :done
+start:     match ab :abtoc :done
 
-abtoc: del  ab
-       prep c                     -- we prepend c to sort of 'store' bs
-       match ab :abtoc :checkdone -- continue ab->c
+abtoc:     del  ab
+           prep c                     -- we prepend c to sort of 'store' bs
+           match ab :abtoc :checkdone -- continue ab->c
 
 checkdone: match b :done :prepstart
 
@@ -26,5 +26,5 @@ prepstart: repa c b
            sort a b
            goto :start
        
-done:  dela b   -- when we're done, num c's is answer
-       repa c a
+done:      dela b   -- when we're done, num c's is answer
+           repa c a
