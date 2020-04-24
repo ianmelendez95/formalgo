@@ -63,9 +63,9 @@ We start with step j=0 and look for the corresponding
 `theta` of that instruction in our string. We replace that `theta` with 
 the corresponding `phi`.
 
-  - | j   | theta | phi     | b   | a   |
-    | --- | ----- | ------- | --- | --- |
-    | 0   | ab    | (empty) | 0   | 1   | 
+  | j   | theta | phi     | b   | a   |
+  | --- | ----- | ------- | --- | --- |
+  | 0   | ab    | (empty) | 0   | 1   | 
   - aa(ab)b
   - aa()b
   - aab
@@ -84,9 +84,9 @@ We repeat this process for instruction 0
 We once again repeat the process for instruction 0, but since we don't 
 match for theta, we move onto `a` which is 1
 
-  - | j   | theta | phi     | b   | a   |
-    | --- | ----- | ------- | --- | --- |
-    | 1   | b     | a       | 1   | 2   | 
+  | j   | theta | phi     | b   | a   |
+  | --- | ----- | ------- | --- | --- |
+  | 1   | b     | a       | 1   | 2   | 
   - ("a", 0)
   - ("a", 1)
 
