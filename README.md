@@ -78,13 +78,13 @@ terminates, but we implicitly assume `N = 2`.
 **BONUS**
 
 Here is the proper formalization of the algorithm itself, in all of it's 
-esoteric glory.
+esoteric glory:
 
-> f((&sigma;,j)) = (&sigma;,a<sub>j</sub>)              if &theta;<sub>j</sub> does not occur in &sigma;
->
-> f((&sigma;,j)) = (&alpha;&phi;&omega;,b<sub>j</sub>)  if &alpha; is the shortest possible string for which &sigma; = &alpha;&theta;<sub>j</sub>&omega;
->
-> f((&sigma;,N)) = (&sigma;,N)
+  f((&sigma;,j)) = (&sigma;,a<sub>j</sub>)              if &theta;<sub>j</sub> does not occur in &sigma;
+
+  f((&sigma;,j)) = (&alpha;&phi;&omega;,b<sub>j</sub>)  if &alpha; is the shortest possible string for which &sigma; = &alpha;&theta;<sub>j</sub>&omega;
+
+  f((&sigma;,N)) = (&sigma;,N)
 
 Where *&sigma;* (sigma) is the current string.
 
