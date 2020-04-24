@@ -1,0 +1,14 @@
+prep bbbb
+prep aaaaaa
+
+mab:   match ab :redab :l1
+
+redab: del  ab
+       prep c
+       goto :mab
+
+l1:    repa a b
+       repa c a
+       match b :mab :done
+
+done:  del _    -- no-op
