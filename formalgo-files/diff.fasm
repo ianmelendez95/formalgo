@@ -1,0 +1,11 @@
+-- a^[x]b^[y] => a^[min(x, y)]
+
+prep bbb
+prep aaaaa
+
+start: match ab :decr :done
+
+decr:  del ab
+       goto :start
+
+done:  repa b a

@@ -1,0 +1,43 @@
+prep bbb
+prep aaaaa
+
+-- GCD Algorithm
+-- gcd(m, n) = 
+--   if |m - n| = 0
+--     then m
+--     else gcd(|m - n|, min(m, n))
+--
+-- More low level
+-- E1. r <- |m - n|
+-- E2. r = 0 ? done, answer is m or n
+-- E3. m <- min(m, n), n <- r, goto E1
+
+diffab:  match ab :delab :findiff -- a^m, b^n
+
+delab:   del  ab        -- reduce ab to cd
+         prep cd
+         goto :diffab
+
+findiff: repa a ec      -- finalize diff
+         repa b ed      -- convert a->ec and/or b->ed
+         sort c e       -- sort c and d before any es
+         sort d e
+         sort c d       -- sort c before d
+         repa c a
+         repa d b       -- a^m, b^n, e^diff(x, y)
+
+chdiff:  match e :min :done              -- check diff
+
+min:     match ab :min1 :mind
+
+min1:    del  ab
+         prep c
+         goto :min
+
+mind:    dela a
+         dela b
+         repa c a   -- a^min(m, n), e^diff(x, y)
+         repa e b   -- a^min(m, n), b^diff(x, y)
+         goto :diffab
+
+done:    dela b -- r = 0, just return m
