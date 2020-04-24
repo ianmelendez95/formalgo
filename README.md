@@ -126,20 +126,73 @@ Where
 
 To evaluate a formal algorithm we first make an appropriate .fa file.
 We'll show what that might look like for the algorithm explored in 
-the previous section.
+the previous section. Consider this file analogous to a binary file, a 
+format that is nearest to what the raw machine interprets.
 
+NOTE: Remove all comments (anything including and after "//") 
+from your final diff.fa file, the evaluator
+does not support comments. 
+
+- diff.fa
 ```
-// diff.fa
-
-2 ab
+2 ab      
 0 ab _ 0 1
 1 b  a 1 2
 ```
 
-So for the first line, `2 ab`, corresponds to, 
+Breaking down the lines
 
-N - the 'terminal' instruction 
-A - the set of characters involved in the algorithm
+```
+2 ab       // N = 2, A = "ab"
+
+           // j theta  phi      b  a
+0 ab _ 0 1 // 0 ab     (empty)  0  1
+1 b  a 1 2 // 1 b      a        1  2
+```
+
+The first line `2 ab` corresponds to: 
+
+  - N, the 'terminal' instruction = 2
+  - A, the set of characters involved in the algorithm = "ab"
+
+We evaluate this file by the simple command
+
+```
+> formalgo diff.fa
+("", 0)
+("", 1)
+("", 2)
+```
+
+What? Basically nothing happened??
+
+Well, formalgo's initial state is always the empty string, we need to populate 
+it so that we can then do interesting things. (Much like normal computers, 
+where every register is effectively uninitialized before an instruction
+utilizes them)
+
+We'll add a few instructions so we get to our "aaabb" string before we 
+start the meat of the algorithm.
+
+- diff.fa
+```
+4 ab       
+0 _ bb  1 1
+1 _ aaa 2 2
+2 ab _ 2 3 
+3 b  a 3 4 
+```
+
+``
+> formalgo diff.fa
+("",0)
+("bb",1)    // we prepended b's with instruction 0 (because we match on the first empty string, which is just the beginning of the string)
+("aaabb",2) // we prepended a's with instruction 1
+("aab",2)
+("a",2)
+("a",3)
+("a",4)
+```
 
 ## The Assembler
 
