@@ -32,7 +32,7 @@ The Markov Algorithm is a simple set of steps of string manipulation.
 We'll explore the algorithm that computes the difference between two numbers,
 of the form
 
-  a<sup>x</sup>b<sup>y</sup> => a<sup>|x - y|</sup>
+  - a<sup>x</sup>b<sup>y</sup> => a<sup>|x - y|</sup>
 
 Take the following formalization:
 
@@ -43,7 +43,7 @@ Take the following formalization:
 
 And an initial string:
 
-  &sigma; = "aaabb",  where a<sup>x = 3</sup>b<sup>y = 2</sup>
+  - &sigma; = "aaabb",  where a<sup>x = 3</sup>b<sup>y = 2</sup>
 
 We are going to go through the following states
 
