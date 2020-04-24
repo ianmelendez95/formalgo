@@ -183,7 +183,7 @@ start the meat of the algorithm.
 3 b  a 3 4 
 ```
 
-``
+```
 > formalgo diff.fa
 ("",0)
 ("bb",1)    // we prepended b's with instruction 0 (because we match on the first empty string, which is just the beginning of the string)
