@@ -16,6 +16,9 @@ to experiment with and further understand it.
 
 ## The Algorithm
 
+> 54. Beware of the Turing tar-pit in which everything is possible 
+> but nothing of interest is easy (Alan Perlis - Epigrams on Programming)
+
 The Markov Algorithm is a simple set of steps of string manipulation.
 We'll explore the algorithm that computes the difference between two numbers,
 of the form
