@@ -24,10 +24,10 @@ of the form
 
 Take the following formalization:
 
-    | j   | theta | phi     | b   | a   |
-    | --- | ----- | ------- | --- | --- |
-    | 0   | ab    | (empty) | 0   | 1   | 
-    | 1   | b     | a       | 1   | 2   | 
+| j   | theta | phi     | b   | a   |
+| --- | ----- | ------- | --- | --- |
+| 0   | ab    | (empty) | 0   | 1   | 
+| 1   | b     | a       | 1   | 2   | 
 
 And an initial string:
 
