@@ -84,15 +84,15 @@ We repeat this process for instruction 0
 We once again repeat the process for instruction 0, but since we don't 
 match for theta, we move onto `a` which is 1
 
-  | j   | theta | phi     | b   | a   |
-  | --- | ----- | ------- | --- | --- |
-  | 1   | b     | a       | 1   | 2   | 
   - ("a", 0)
   - ("a", 1)
 
 We evaluate instruction 1, fail to match for `theta`, 
 and move onto instruction 2
 
+  | j   | theta | phi     | b   | a   |
+  | --- | ----- | ------- | --- | --- |
+  | 1   | b     | a       | 1   | 2   | 
   - ("a", 1)
   - ("a", 2)
 
