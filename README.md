@@ -63,7 +63,9 @@ We start with step j=0 and look for the corresponding
 `theta` of that instruction in our string. We replace that `theta` with 
 the corresponding `phi`.
 
-  - | 0   | ab    | (empty) | 0   | 1   | 
+  - | j   | theta | phi     | b   | a   |
+    | --- | ----- | ------- | --- | --- |
+    | 0   | ab    | (empty) | 0   | 1   | 
   - aa(ab)b
   - aa()b
   - aab
