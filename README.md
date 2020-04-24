@@ -2,6 +2,11 @@
 
 ## Preface
 
+> "The notion of an algorithm is basic to all of computer programming,
+> so we should begin with a careful analysis of this concept."
+>
+> (Donald Knuth - The Art of Computer Programming Vol. 1)
+
 Once upon a time A. A. Markov produced The Theory of Algorithms and within it 
 were wonderful explorations of algorithms, formalizing and analyzing their study.
 I did not read that text, but Donald Knuth sure did, and decided to include the 
