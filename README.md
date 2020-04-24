@@ -8,14 +8,16 @@
 > (Donald Knuth - The Art of Computer Programming Vol. 1)
 
 Once upon a time A. A. Markov produced The Theory of Algorithms and within it 
-were wonderful explorations of algorithms, formalizing and analyzing their study.
+were wonderful explorations of said constructs, 
+formalizing and analyzing their study.
+
 I did not read that text, but Donald Knuth sure did, and decided to include the 
 Markov algorithm in Secion 1.1 of his book The Art of Computer Programming, 
 rendering me equally puzzled and intrigued.
 
 It is truly a wonderful algorithm, so incredibly simple that anyone 
-could realize it with pen and paper, and filled to the brim with potential
-both theoretically and practically. Enamored with the concept I sought out 
+could realize it with pen and paper, filled to the brim with potential
+both theoretical and practical. Enamored with the concept I sought out 
 to implement an evaluator as well as an assembler for generating the algorithm, 
 to experiment with and further understand it.
 
@@ -45,12 +47,12 @@ And an initial string:
 
 We are going to go through the following states
 
-  N. (&sigma;, j)
-  1. ("aaabb", 0)
-  2. ("aab", 0)
-  3. ("a", 0)
-  4. ("a", 1)
-  5. ("a", 2)
+  - N. (&sigma;, j)
+  - 1. ("aaabb", 0)
+  - 2. ("aab", 0)
+  - 3. ("a", 0)
+  - 4. ("a", 1)
+  - 5. ("a", 2)
 
 Where "a" is our final state, of the form a<sup>1</sup> = a<sup>|x - y|</sup>
 
