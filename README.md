@@ -9,7 +9,7 @@ Markov algorithm in Secion 1.1 of his book The Art of Computer Programming,
 rendering me equally puzzled and intrigued.
 
 It is truly a wonderful algorithm, so incredibly simple that anyone 
-could realize it with pen and paper and filled to the brim with potential
+could realize it with pen and paper, and filled to the brim with potential
 both theoretically and practically. Enamored with the concept I sought out 
 to implement an evaluator as well as an assembler for generating the algorithm, 
 to experiment with and further understand it.
@@ -20,7 +20,7 @@ The Markov Algorithm is a simple set of steps of string manipulation.
 We'll explore the algorithm that computes the difference between two numbers,
 of the form
 
-    a<sup>x</sup>b<sup>y</sup> => a<sup>|x - y|</sup>
+  a<sup>x</sup>b<sup>y</sup> => a<sup>|x - y|</sup>
 
 Take the following formalization:
 
