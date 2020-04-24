@@ -45,23 +45,25 @@ And an initial string:
 
   - &sigma; = "aaabb",  where a<sup>x = 3</sup>b<sup>y = 2</sup>
 
-We are going to go through the following states
+We are going to go through the following states. 
+(This should be skimmed and used as a reference as we go through the breakdown below.)
 
   - (&sigma;, j)
   1. ("aaabb", 0)
-  2. ("aab", 0)
-  3. ("a", 0)
-  4. ("a", 1)
+  2. ("aab", 0)  
+  3. ("a", 0)    
+  4. ("a", 1)    
   5. ("a", 2)
 
 Where "a" is our final state, of the form a<sup>1</sup> = a<sup>|x - y|</sup>
 
 **BREAKDOWN**
 
-So we start with step j=0 and look for the corresponding 
+We start with step j=0 and look for the corresponding 
 `theta` of that instruction in our string. We replace that `theta` with 
 the corresponding `phi`.
 
+  - | 0   | ab    | (empty) | 0   | 1   | 
   - aa(ab)b
   - aa()b
   - aab
