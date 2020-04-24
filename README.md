@@ -67,25 +67,25 @@ So we start with step j=0 and look for the corresponding
 `theta` of that instruction in our string. We replace that `theta` with 
 the corresponding `phi`.
 
-  aa(ab)b => aa()b = aab
+  - aa(ab)b => aa()b = aab
 
 Since we matched for `theta`, we move to instruction `b` which is still 0
 
-  ("aaabb", 0) => ("aab", `b`) = ("aab", 0)
+  - ("aaabb", 0) => ("aab", `b`) = ("aab", 0)
 
 We repeat this process for instruction 0
 
-  ("aab", 0)   => ("a", 0)
+  - ("aab", 0)   => ("a", 0)
 
 We once again repeat the process for instruction 0, but since we don't 
 match for theta, we move onto `a` which is 1
 
-  ("a", 0)     => ("a", 1)
+  - ("a", 0)     => ("a", 1)
 
 We evaluate instruction 1, fail to match for `theta`, 
 and move onto instruction 2
 
-  ("a", 1)     => ("a", 2)
+  - ("a", 1)     => ("a", 2)
 
 Since there is no instruction 2<sup>\*</sup> we are done with our algorithm.
 
@@ -97,18 +97,43 @@ terminates, but we implicitly assume `N = 2`.
 Here is the proper formalization of the algorithm itself, in all of it's 
 esoteric glory:
 
-  f((&sigma;,j)) = (&sigma;,a<sub>j</sub>)              if &theta;<sub>j</sub> does not occur in &sigma;
+  - f((&sigma;,j)) = (&sigma;,a<sub>j</sub>)              if &theta;<sub>j</sub> does not occur in &sigma;
+  - f((&sigma;,j)) = (&alpha;&phi;&omega;,b<sub>j</sub>)  if &alpha; is the shortest possible string for which &sigma; = &alpha;&theta;<sub>j</sub>&omega;
+  - f((&sigma;,N)) = (&sigma;,N)
 
-  f((&sigma;,j)) = (&alpha;&phi;&omega;,b<sub>j</sub>)  if &alpha; is the shortest possible string for which &sigma; = &alpha;&theta;<sub>j</sub>&omega;
+Where 
 
-  f((&sigma;,N)) = (&sigma;,N)
+  - *&sigma;* (sigma) is the current string.
+  - *&alpha;* (alpha) is the matched portion of the string *before* the matched *&theta;* (theta).
+  - *&omega;* (omega) is the matched portion of the string *after* the matched *&theta;*
+  - *N* is the value *j* for which you are effectively done. 
+    - In the explored example, *N* was implicitly 2.
 
-Where *&sigma;* (sigma) is the current string.
+## The Evaluator
 
-*&alpha;* (alpha) is the matched portion of the string *before* the matched *&theta;* (theta).
+> "eval('1 + 2')"
+> 
+> (Evaluation in Python, JavaScript, PHP, Perl, and various other languages)
 
-*&omega;* (omega) is the matched portion of the string *after* the matched *&theta;*
+To evaluate a formal algorithm we first make an appropriate .fa file.
+We'll show what that might look like for the algorithm explored in 
+the previous section.
 
-*N* is the value *j* for which you are effectively done. 
-In the explored example, *N* was implicitly 2.
+```
+// diff.fa
 
+2 ab
+0 ab _ 0 1
+1 b  a 1 2
+```
+
+So for the first line, `2 ab`, corresponds to, 
+
+N - the 'terminal' instruction 
+A - the set of characters involved in the algorithm
+
+## The Assembler
+
+> "I started out with machine code and assembly language"
+> 
+> (Charles Petzold)
