@@ -31,30 +31,24 @@ Take the following formalization:
 
 And an initial string:
 
-aaabb 
+  **"aaabb"** where a<sup>x = 3</sup>b<sup>y = 2</sup>
 
-Where: a<sup>x = 3</sup>b<sup>y = 2</sup>
+So we start with step j=0 and look for the corresponding 
+`theta` of that instruction in your string.
 
-So say you're on step 0. Look for the instruction for j = 0. 
-
-Then you are going to look for `theta` of that instruction in your string.
-
-    aa(ab)b
+  **aa(ab)b**
 
 Now replace that `theta` with corresponding `phi`. 
 In our case we replace it with the empty string.
 
-    aab
+  **aa(ab)b => aa()b**
 
-Since we found `theta` we go to instruction `b`.
-(If we hadn't matched we would have gone to `a`, more on that later.)
+Since we found `theta` we go to instruction `b` which is instruction 0.
+We apply instruction 0 again.
 
-Since `b` is zero for instruction 0, we repeat instruction 0, so
+  **a(ab) -> a()**
 
-    aab -> a
-
-Then once again repeat instruction 0.
-This time the string "a" does not contain 
+Once more we apply instruction 0, but this time the string "a" does not contain 
 `theta`, so we go to `a` which is instruction 1
 
 For instruction 1, the string "a" does not contain 'b', so we go to instruction
@@ -71,9 +65,9 @@ relation would x have to y for there to have been any b characters left?
 Here is the proper formalization of the algorithm itself, in all of it's 
 esoteric glory.
 
-    f((&sigma;,j)) = (&sigma;,a<sub>j</sub>)              if &theta;<sub>j</sub> does not occur in &sigma;
-    f((&sigma;,j)) = (&alpha;&phi;&omega;,b<sub>j</sub>)  if &alpha; is the shortest possible string for which &sigma; = &alpha;&theta;<sub>j</sub>&omega;
-    f((&sigma;,N)) = (&sigma;,N)
+  f((&sigma;,j)) = (&sigma;,a<sub>j</sub>)              if &theta;<sub>j</sub> does not occur in &sigma;
+  f((&sigma;,j)) = (&alpha;&phi;&omega;,b<sub>j</sub>)  if &alpha; is the shortest possible string for which &sigma; = &alpha;&theta;<sub>j</sub>&omega;
+  f((&sigma;,N)) = (&sigma;,N)
 
 Where *&sigma;* (sigma) is the current string.
 
