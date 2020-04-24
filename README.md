@@ -47,17 +47,12 @@ And an initial string:
 
 We are going to go through the following states
 
-  -- N. (&sigma;, j)
-
-  -- 1. ("aaabb", 0)
-
-  => 2. ("aab", 0)
-
-  => 3. ("a", 0)
-
-  => 4. ("a", 1)
-
-  => 5. ("a", 2)
+  - (&sigma;, j)
+  1. ("aaabb", 0)
+  2. ("aab", 0)
+  3. ("a", 0)
+  4. ("a", 1)
+  5. ("a", 2)
 
 Where "a" is our final state, of the form a<sup>1</sup> = a<sup>|x - y|</sup>
 
