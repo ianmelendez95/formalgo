@@ -67,25 +67,32 @@ So we start with step j=0 and look for the corresponding
 `theta` of that instruction in our string. We replace that `theta` with 
 the corresponding `phi`.
 
-  - aa(ab)b => aa()b = aab
+  - aa(ab)b
+  - aa()b
+  - aab
 
 Since we matched for `theta`, we move to instruction `b` which is still 0
 
-  - ("aaabb", 0) => ("aab", `b`) = ("aab", 0)
+  - ("aaabb", 0)
+  - ("aab", `b`)
+  - ("aab", 0)
 
 We repeat this process for instruction 0
 
-  - ("aab", 0)   => ("a", 0)
+  - ("aab", 0) 
+  - ("a", 0)
 
 We once again repeat the process for instruction 0, but since we don't 
 match for theta, we move onto `a` which is 1
 
-  - ("a", 0)     => ("a", 1)
+  - ("a", 0)
+  - ("a", 1)
 
 We evaluate instruction 1, fail to match for `theta`, 
 and move onto instruction 2
 
-  - ("a", 1)     => ("a", 2)
+  - ("a", 1)
+  - ("a", 2)
 
 Since there is no instruction 2<sup>\*</sup> we are done with our algorithm.
 
