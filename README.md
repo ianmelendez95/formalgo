@@ -67,7 +67,7 @@ So we start with step j=0 and look for the corresponding
 `theta` of that instruction in our string. We replace that `theta` with 
 the corresponding `phi`.
 
-  aa(ab)b => aa()b = aab
+  <div style='margin-left: 1rem'>aa(ab)b => aa()b = aab</div>
 
 Since we matched for `theta`, we move to instruction `b` which is still 0
 
