@@ -31,34 +31,49 @@ Take the following formalization:
 
 And an initial string:
 
-  **"aaabb"** where a<sup>x = 3</sup>b<sup>y = 2</sup>
+  &sigma; = "aaabb",  where a<sup>x = 3</sup>b<sup>y = 2</sup>
+
+We are going to go through the following states
+
+  N. (&sigma;, j)
+  1. ("aaabb", 0)
+  2. ("aab", 0)
+  3. ("a", 0)
+  4. ("a", 1)
+  5. ("a", 2)
+
+Where "a" is our final state, of the form a<sup>1</sup> = a<sup>|x - y|</sup>
+
+**BREAKDOWN**
 
 So we start with step j=0 and look for the corresponding 
-`theta` of that instruction in your string.
+`theta` of that instruction in our string. We replace that `theta` with 
+the corresponding `phi`.
 
-  **aa(ab)b**
+  aa(ab)b => aa()b = aab
 
-Now replace that `theta` with corresponding `phi`. 
-In our case we replace it with the empty string.
+Since we matched for `theta`, we move to instruction `b` which is still 0
 
-  **aa(ab)b => aa()b**
+  ("aaabb", 0) => ("aab", `b`) = ("aab", 0)
 
-Since we found `theta` we go to instruction `b` which is instruction 0.
-We apply instruction 0 again.
+We repeat this process for instruction 0
 
-  **a(ab) -> a()**
+  ("aab", 0)   => ("a", 0)
 
-Once more we apply instruction 0, but this time the string "a" does not contain 
-`theta`, so we go to `a` which is instruction 1
+We once again repeat the process for instruction 0, but since we don't 
+match for theta, we move onto `a` which is 1
 
-For instruction 1, the string "a" does not contain 'b', so we go to instruction
-`a` again. Since there is no instruction 2, we are done, and our answer is
-correctly of the form
+  ("a", 0)     => ("a", 1)
 
-    a = a<sup>1</sup> = a<sup>|3 - 2|</sup>
+We evaluate instruction 1, fail to match for `theta`, 
+and move onto instruction 2
 
-As an exercise, in what case would the instruction 1 been effective - what 
-relation would x have to y for there to have been any b characters left?
+  ("a", 1)     => ("a", 2)
+
+Since there is no instruction 2<sup>\*</sup> we are done with our algorithm.
+
+<sup>\*</sup> The formal algorithm requires an `N` for which the algorithm
+terminates, but we implicitly assume `N = 2`.
 
 **BONUS**
 
