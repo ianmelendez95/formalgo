@@ -199,3 +199,32 @@ start the meat of the algorithm.
 > "I started out with machine code and assembly language"
 > 
 > (Charles Petzold)
+
+The Assembler is a fairly direct analog to real Assemblers, providing mnemonics
+to common instructions. The file extension is .fasm for 'formalgo assembly' 
+(and the file extension for the real 'flat assembler'!)
+
+Here is an example of multiplication in formalgo assembly:
+
+- mult.fasm
+```
+           prep  bbb   -- b = 4
+           prep  aaaa  -- a = 5
+
+start:     match b :bmatch :bnotmatch
+
+bmatch:    del   b
+           repa  a cd
+           repa  d a
+           goto  :start
+
+bnotmatch: dela  a
+           repa  c a
+```
+
+Here is the Assembler instruction set:
+
+| name | theta | phi     | b   | a   |
+| ---  | ----- | ------- | --- | --- |
+| 0    | ab    | (empty) | 0   | 1   | 
+| 1    | b     | a       | 1   | 2   | 
