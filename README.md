@@ -31,7 +31,9 @@ Take the following formalization:
 
 And an initial string:
 
-    aaabb = a<sup>x = 3</sup>b<sup>y = 2</sup>
+aaabb 
+
+Where: a<sup>x = 3</sup>b<sup>y = 2</sup>
 
 So say you're on step 0. Look for the instruction for j = 0. 
 
