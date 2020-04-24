@@ -1,0 +1,11 @@
+prep bbbb
+prep aaaaaa
+
+delab: prim ab _ :prepc :check
+prepc: prim _  c :delab :delab
+
+check: repa a b
+       repa c a
+       match b :delab :done
+
+done:  del _    -- no-op
