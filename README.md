@@ -228,8 +228,9 @@ bnotmatch: dela  a                     -- once we are done, we should have c^(x 
 ```
 
 ```
-> formalgo mult.fasm
+> formalgo mult.fasm // produces file mult.fa
 
+> formalgo mult.fa
 ("",0)
 ("bb",1)
 ("aaabb",2)
@@ -241,8 +242,6 @@ bnotmatch: dela  a                     -- once we are done, we should have c^(x 
 ("aaaaac",9)
 ("aaaaaa",9)
 ("aaaaaa",10)
-
-
 ```
 
 We'll explore the abridged states of the evaluation for "aaabb"
