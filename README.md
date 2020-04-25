@@ -224,6 +224,24 @@ bnotmatch: dela  a                     -- once we are done, we should have c^(x 
            repa  c a                   -- and turn our c's into a's to encode our final answer, a^(x * y)
 ```
 
+```
+> formalgo mult.fasm
+
+("",0)
+("bb",1)
+("aaabb",2)
+("aaabb",3)
+
+...
+
+("aaaacc",9)
+("aaaaac",9)
+("aaaaaa",9)
+("aaaaaa",10)
+
+
+```
+
 We'll explore the abridged states of the evaluation for "aaabb"
 
 | instruction(s)             | string                   | effect                                           |
