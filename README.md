@@ -228,7 +228,7 @@ We'll explore the abridged states of the evaluation for "aaabb"
 
 | instruction(s)             | string                   | effect                                           |
 | --- | --- | --- |
-| match b :bmatch :bnotmatch | "aaabb"                  | 'b' is indeed in the string, so we go to :bmatch |
+| - match b :bmatch :bnotmatch | "aaabb"                  | 'b' is indeed in the string, so we go to :bmatch |
 | del b                      | "aaabb" => "aaab"        | simply delete first 'b' |
 | repa a cd                  | "aaab" => "cdcdcdb"      | replace all 'a's with 'cd' |
 | repa d a                   | "aaab" => "cacacab"      | replace all 'd's with 'a's |
