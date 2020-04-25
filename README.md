@@ -1,12 +1,5 @@
 # formalgo
 
-| TOC                                                                   |
-| --------------------------------------------------------------------- |
-| [Preface](#preface)                                                 |
-| [The Algorithm](#the-algorithm)                               |
-| [The Evaluator](#the-evaluator) | 
-| [The Assembler](#the-assembler) |
-
 
 ## Preface
 
@@ -28,6 +21,13 @@ could realize it with pen and paper, filled to the brim with potential
 both theoretical and practical. Enamored with the concept I sought out 
 to implement an evaluator as well as an assembler for generating the algorithm, 
 to experiment with and further understand it.
+
+| TOC                                                                   |
+| --------------------------------------------------------------------- |
+| [Preface](#preface)                                                 |
+| [The Algorithm](#the-algorithm)                               |
+| [The Evaluator](#the-evaluator) | 
+| [The Assembler](#the-assembler) |
 
 ## The Algorithm
 
