@@ -296,7 +296,7 @@ instructions in the documentation
 
     https://docs.haskellstack.org/en/stable/README/
 
-Then you can run formalgo through stack with 
+Then you can run formalgo through stack when in the project directory with
 
     stack exec -- formalgo-exe [file]
 
