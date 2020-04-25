@@ -244,7 +244,7 @@ bnotmatch: dela  a                     -- once we are done, we should have c^(x 
 ("aaaaaa",10)
 ```
 
-We'll explore the abridged states of the evaluation for "aaabb"
+We'll explore the abridged states of the evaluation for "aaabb" in order
 
 | instruction(s)             | string                   | effect                                           |
 | --- | --- | --- |
