@@ -210,16 +210,17 @@ Here is an example of multiplication in formalgo assembly:
 ```
            prep  bbb   -- b = 4
            prep  aaaa  -- a = 5
+                       -- a^x=5, b^y=4
 
-start:     match b :bmatch :bnotmatch
+start:     match b :bmatch :bnotmatch  -- if b exists goto :bmatch
 
-bmatch:    del   b
-           repa  a cd
-           repa  d a
-           goto  :start
+bmatch:    del   b                     -- here we delete b (effectively a 'decrement' of b), a^x b^y => a^x b^(y--)
+           repa  a cd                  -- replace all a's with cd's                          a^x b^y => c^x d^x b^y
+           repa  d a                   -- replace all d's with a's                           c^x d^x b^y => c^x a^x b^y
+           goto  :start                -- continue to start (until there are no b's)
 
-bnotmatch: dela  a
-           repa  c a
+bnotmatch: dela  a                     -- once we are done, we should have c^(x * y) a^x, so we just remove the a's
+           repa  c a                   -- and turn our c's into a's to encode our final answer, a^(x * y)
 ```
 
 Here is the Assembler instruction set:
