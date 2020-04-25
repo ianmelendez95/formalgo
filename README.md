@@ -228,8 +228,8 @@ Here is the Assembler instruction set:
 
 | name | params        | description                               | 
 | ---  | ------------- | ----------------------------------------- |
-| repa | &theta; &phi; | "Replace All" - replaces all instances of |
-|      |               |                 &theta; with &phi;        | 
+| repa | &theta; &phi; | "Replace All" - replaces all instances of 
+                 &theta; with &phi;        | 
 | prep | &phi;         | "Prepend" - prepends &phi;                                   |
 | del  | &theta;       | "Delete" - deletes the first instance of &theta;             |
 | dela | &theta;       | "Deleta All" - deletes all instances of &theta;              |
