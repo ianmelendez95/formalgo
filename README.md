@@ -229,8 +229,8 @@ bnotmatch: dela  a                     -- once we are done, we should have c^(x 
 
 ```
 > formalgo mult.fasm // produces file mult.fa
-
 > formalgo mult.fa
+
 ("",0)
 ("bb",1)
 ("aaabb",2)
