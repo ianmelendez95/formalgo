@@ -1,5 +1,13 @@
 # formalgo
 
+| TOC                                                                   |
+| --------------------------------------------------------------------- |
+| [Preface](#preface)                                                 |
+| [The Algorithm](#the-algorithm)                               |
+| [The Evaluator](#the-evaluator) | 
+| [The Assembler](#the-assembler) |
+
+
 ## Preface
 
 > "The notion of an algorithm is basic to all of computer programming,
