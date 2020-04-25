@@ -136,10 +136,6 @@ We'll show what that might look like for the algorithm explored in
 the previous section. Consider this file analogous to a binary file, a 
 format that is nearest to what the raw machine interprets.
 
-NOTE: Remove all comments (anything including and after "//") 
-from your final diff.fa file, the evaluator
-does not support comments. 
-
 - diff.fa
 ```
 2 ab      
