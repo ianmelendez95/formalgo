@@ -27,6 +27,7 @@ to experiment with and further understand it.
 | [The Algorithm](#the-algorithm)                               |
 | [The Evaluator](#the-evaluator) | 
 | [The Assembler](#the-assembler) |
+| [Building Formalgo](#building-formalgo) |
 
 ## The Algorithm
 
@@ -287,3 +288,18 @@ Here is the Assembler instruction set:
 | name  | params                | description                                                               | 
 | ---   | --------------------- | ------------------------------------------------------------------------- |
 | prim  | &theta; &phi; b a     | "Primitive" - the primitive instruction, directly mapping to the<br/>formalgo instructions. b and a are either labels or offsets |
+
+## Building Formalgo
+
+To build formalgo, simply download Haskell Stack, follow the installation
+instructions in the documentation
+
+    https://docs.haskellstack.org/en/stable/README/
+
+Then you can run formalgo through stack with 
+
+    stack exec -- formalgo-exe [file]
+
+or if you have Zsh 
+
+    ./exec [file]
