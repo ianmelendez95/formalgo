@@ -110,7 +110,7 @@ terminates, but we implicitly assume `N = 2`.
 
 **BONUS**
 
-Here is the proper formalization of the algorithm itself, in all of it's 
+Here is the proper formalization of the algorithm itself, in all of its 
 esoteric glory:
 
   - f((&sigma;,j)) = (&sigma;,a<sub>j</sub>)              if &theta;<sub>j</sub> does not occur in &sigma;
