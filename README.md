@@ -237,8 +237,7 @@ Here is the Assembler instruction set:
 
 | name | params        | description                           | 
 | ---  | ------------- | ------------------------------------- |
-| sort | first second  | "Sort" - Performs a pseudo-sort, putting first before second  | 
-|      |               | (sort a b | "bbbaa" -> "aabbb")       |
+| sort | first second  | "Sort" - Performs a pseudo-sort, putting first before second<br/>(sort a b | "bbbaa" -> "aabbb") |
 
 - JUMPing
 
