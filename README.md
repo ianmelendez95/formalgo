@@ -24,7 +24,6 @@ to experiment with and further understand it.
 
 | TOC                                                                   |
 | --------------------------------------------------------------------- |
-| [Preface](#preface)                                                 |
 | [The Algorithm](#the-algorithm)                               |
 | [The Evaluator](#the-evaluator) | 
 | [The Assembler](#the-assembler) |
