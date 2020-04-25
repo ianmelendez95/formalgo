@@ -227,6 +227,7 @@ bnotmatch: dela  a                     -- once we are done, we should have c^(x 
 We'll explore the abridged states of the evaluation for "aaabb"
 
 | instruction(s)             | string                   | effect                                           |
+| --- | --- | --- |
 | match b :bmatch :bnotmatch | "aaabb"                  | 'b' is indeed in the string, so we go to :bmatch |
 | del b                      | "aaabb" => "aaab"        | simply delete first 'b' |
 | repa a cd                  | "aaab" => "cdcdcdb"      | replace all 'a's with 'cd' |
@@ -235,7 +236,7 @@ We'll explore the abridged states of the evaluation for "aaabb"
 | goto :start<br/>match b :bmatch :bnotmatch | "cccaaab" | unconditionally jump to instruction :start, go back to :bmatch since there are b's |
 | del b<br/>repa a cd<br/>repa d a<br/>sort a c | "cccaaab" => "ccccccaaa" | notice how there are 6 c's, which is 3 * 2, our target value |
 | match b :bmatch :bnotmatch | "ccccccaaa" | 'b' is finally not in the string, so we go to :bnotmatch |
-| dela a<br/>repa c a | "ccccccaaa" -> "aaaaaa" | we extract our answer, a^(x * y)
+| dela a<br/>repa c a | "ccccccaaa" -> "aaaaaa" | we extract our answer, a^(x * y) |
 
 Here is the Assembler instruction set:
 
