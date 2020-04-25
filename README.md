@@ -225,6 +225,7 @@ bnotmatch: dela  a
 Here is the Assembler instruction set:
 
 - Simple String Editing
+
 | name | params        | description                               | 
 | ---  | ------------- | ----------------------------------------- |
 | repa | &theta; &phi; | "Replace All" - replaces all instances of |
@@ -234,6 +235,7 @@ Here is the Assembler instruction set:
 | dela | &theta;       | "Deleta All" - deletes all instances of &theta;              |
 
 - Character Manipulation
+
 | name | params        | description                           | 
 | ---  | ------------- | ------------------------------------- |
 | sort | first second  | "Sort" - Performs a pseudo-sort,      |
@@ -241,6 +243,7 @@ Here is the Assembler instruction set:
 |      |               | (sort a b | "bbbaa" -> "aabbb")       |
 
 - JUMPing
+
 | name  | params                | description                                                              | 
 | ---   | --------------------- | ------------------------------------------------------------------------ |
 | goto  | label                 | "GOTO" - jump to the label unconditionally                               | 
@@ -248,6 +251,7 @@ Here is the Assembler instruction set:
 |       |                       |           goto success, otherwise goto fail                              |
 
 - Primitive
+
 | name  | params                | description                                                               | 
 | ---   | --------------------- | ------------------------------------------------------------------------- |
 | prim  | &theta; &phi; b a     | "Primitive" - the primitive instruction, directly mapping to the          | 
