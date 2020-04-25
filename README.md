@@ -228,8 +228,7 @@ Here is the Assembler instruction set:
 
 | name | params        | description                               | 
 | ---  | ------------- | ----------------------------------------- |
-| repa | &theta; &phi; | "Replace All" - replaces all instances of 
-                 &theta; with &phi;        | 
+| repa | &theta; &phi; | "Replace All" - replaces all instances of &theta; with &phi;        | 
 | prep | &phi;         | "Prepend" - prepends &phi;                                   |
 | del  | &theta;       | "Delete" - deletes the first instance of &theta;             |
 | dela | &theta;       | "Deleta All" - deletes all instances of &theta;              |
@@ -238,8 +237,7 @@ Here is the Assembler instruction set:
 
 | name | params        | description                           | 
 | ---  | ------------- | ------------------------------------- |
-| sort | first second  | "Sort" - Performs a pseudo-sort,      |
-|      |               |          putting first before second  | 
+| sort | first second  | "Sort" - Performs a pseudo-sort, putting first before second  | 
 |      |               | (sort a b | "bbbaa" -> "aabbb")       |
 
 - JUMPing
@@ -247,12 +245,10 @@ Here is the Assembler instruction set:
 | name  | params                | description                                                              | 
 | ---   | --------------------- | ------------------------------------------------------------------------ |
 | goto  | label                 | "GOTO" - jump to the label unconditionally                               | 
-| match | &theta; success fail  | "Match" - If &theta; is in the string,                                   |
-|       |                       |           goto success, otherwise goto fail                              |
+| match | &theta; success fail  | "Match" - If &theta; is in the string, goto success, otherwise goto fail |
 
 - Primitive
 
 | name  | params                | description                                                               | 
 | ---   | --------------------- | ------------------------------------------------------------------------- |
-| prim  | &theta; &phi; b a     | "Primitive" - the primitive instruction, directly mapping to the          | 
-|       |                       |               formalgo instructions. b and a are either labels or offsets |
+| prim  | &theta; &phi; b a     | "Primitive" - the primitive instruction, directly mapping to the<br/>formalgo instructions. b and a are either labels or offsets |
